@@ -3,6 +3,7 @@ import { Varela_Round } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/navbar/Navbar"
 import Container from "@/components/global/Container"
+import Providers from "./providers"
 
 const font = Varela_Round({ subsets: ["latin"], weight: "400" })
 
@@ -19,13 +20,15 @@ type ReadonlyChildrenReactNode = Readonly<{ children: React.ReactNode }>
 export default function RootLayout({ children }: ReadonlyChildrenReactNode) {
   const htmlElementAttributes: React.HTMLAttributes<HTMLElement> = {
     lang: "en",
-    // suppressHydrationWarning: true,
+    suppressHydrationWarning: true,
   }
   return (
     <html {...htmlElementAttributes}>
       <body className={font.className}>
-        <Navbar />
-        <Container className='py-20'>{children}</Container>
+        <Providers>
+          <Navbar />
+          <Container className='py-20'>{children}</Container>
+        </Providers>
       </body>
     </html>
   )
