@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from "./theme-provider"
 
-function providers({ children }: { children: React.ReactNode }) {
+function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ThemeProvider
@@ -16,4 +16,4 @@ function providers({ children }: { children: React.ReactNode }) {
     </>
   )
 }
-export default providers
+export default Providers
