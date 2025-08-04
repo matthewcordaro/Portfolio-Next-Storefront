@@ -1,4 +1,4 @@
-import { BsList } from "react-icons/bs"
+import { BsThreeDotsVertical } from "react-icons/bs"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ function LinksDropdown() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='outline' className='flex gap-4 max-w-[100px]'>
-            <BsList className='w-6 h-6' />
+            <BsThreeDotsVertical className='w-6 h-6' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-36' align='end' sideOffset={10}>
