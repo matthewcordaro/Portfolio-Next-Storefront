@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Carousel,
   CarouselContent,
@@ -5,19 +7,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import Autoplay from "embla-carousel-autoplay"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import hero1 from "@/public/images/1.jpg"
 import hero2 from "@/public/images/2.jpg"
 import hero3 from "@/public/images/3.jpg"
 import hero4 from "@/public/images/4.jpg"
+import { useMemo } from "react"
 
 const carouselImages = [hero1, hero2, hero3, hero4]
 
 function HeroCarousel() {
+  // autoplay memoized to not kill the counter on rerender
+  const autoplay = useMemo(() => Autoplay({ delay: 5000 }), [])
   return (
     <div className='hidden lg:block'>
-      <Carousel>
+      <Carousel plugins={[autoplay]}>
         <CarouselContent>
           {carouselImages.map((image, index) => {
             return (
