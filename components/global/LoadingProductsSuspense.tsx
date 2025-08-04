@@ -1,11 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "../ui/skeleton"
-import SectionTitle from "../global/SectionTitle"
+import SectionTitle from "./SectionTitle"
 
-function ProductsGridSuspense() {
+function LoadingProductsSuspense({ text }: { text?: string }) {
   return (
     <section className='pt-24'>
-      <SectionTitle text='Featured products' />
+      {text && <SectionTitle text={text} /> /* add section title if defined */}
       <div className='pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
         <LoadingProduct />
         <LoadingProduct />
@@ -26,4 +26,4 @@ function LoadingProduct() {
     </Card>
   )
 }
-export default ProductsGridSuspense
+export default LoadingProductsSuspense

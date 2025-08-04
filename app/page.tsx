@@ -1,5 +1,5 @@
 import FeaturedProducts from "@/components/home/FeaturedProducts"
-import FeaturedProductsSuspense from "@/components/home/FeaturedProductsSuspense"
+import LoadingProductsSuspense from "@/components/global/LoadingProductsSuspense"
 import Hero from "@/components/home/Hero"
 import { Suspense } from "react"
 
@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <>
       <Hero />
-      <Suspense fallback={<FeaturedProductsSuspense />}>
+      <Suspense fallback={<LoadingProductsSuspense text='Featured products' />}>
         <FeaturedProducts />
       </Suspense>
     </>
