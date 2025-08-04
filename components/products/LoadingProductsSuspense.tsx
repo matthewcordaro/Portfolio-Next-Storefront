@@ -2,9 +2,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "../ui/skeleton"
 import SectionTitle from "../global/SectionTitle"
 
-function LoadingProductsSuspense({ text }: { text?: string }) {
+function LoadingProductsSuspense({ text, className }: { text?: string, className?: string }) {
   return (
-    <section className='pt-24'>
+    <section className={className}>
       {text && <SectionTitle text={text} /> /* add section title if defined */}
       <div className='pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
         <LoadingProduct />

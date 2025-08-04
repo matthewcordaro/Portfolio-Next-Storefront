@@ -7,7 +7,11 @@ function HomePage() {
   return (
     <>
       <Hero />
-      <Suspense fallback={<LoadingProductsSuspense text='Featured products' />}>
+      <Suspense
+        fallback={
+          <LoadingProductsSuspense text='Featured products' className='pt-24' />
+        }
+      >
         <FeaturedProducts />
       </Suspense>
     </>
