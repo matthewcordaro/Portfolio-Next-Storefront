@@ -1,0 +1,2 @@
+This folder auto-redirects via middleware to the admin dashboard.
+No route components live here by design.
