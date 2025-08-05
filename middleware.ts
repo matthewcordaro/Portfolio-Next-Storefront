@@ -1,5 +1,8 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
+import {
+  clerkMiddleware as middleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server"
+import { NextRequest, NextResponse } from "next/server"
 
 // Declare redirect mappings
 const redirects: Record<string, string> = {
@@ -7,25 +10,17 @@ const redirects: Record<string, string> = {
   "/admin/dashboard": "/admin/sales",
 }
 
-// Dynamically build matcher entries
-const redirectMatchers = Object.keys(redirects)
-
 // Public routes for Clerk
 const isPublicRoute = createRouteMatcher(["/", "/products(.*)", "/about"])
 
-export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-    ...redirectMatchers, // Inject all redirect paths here
-  ],
-}
+// Administrative Routes
+const isAdminRoute = createRouteMatcher(["/admin(.*)"])
 
 // Redirect chaining helper
-function getFinalRedirect(pathname: string): string | null {
+function getFinalRedirect(request: NextRequest): URL | null {
   const visited = new Set<string>()
+  const { pathname } = request.nextUrl
   let current = pathname
-
   while (redirects[current]) {
     if (visited.has(current)) {
       console.error(
@@ -35,23 +30,36 @@ function getFinalRedirect(pathname: string): string | null {
       )
       return null // Prevent infinite loop
     }
-
     current = redirects[current]
   }
-
-  return current !== pathname ? current : null
+  return current !== pathname ? new URL(current, request.url) : null
 }
 
-export default clerkMiddleware((auth, request) => {
+export const config = {
+  matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
+    // Matching from redirect.keys()
+    // Wish this could be done at compile time.
+    "/admin",
+    "/admin/dashboard",
+  ],
+}
+
+export default middleware((auth, request) => {
+  // Unauthorized
+  const isAdminUser = auth().userId === process.env.ADMIN_USER_ID
+  if (isAdminRoute(request) && !isAdminUser) {
+    return NextResponse.redirect(new URL("/", request.url))
+  }
+
   // Clerk protection
   if (!isPublicRoute(request)) auth().protect()
 
   // Redirect handling
-  const { pathname } = request.nextUrl
-  const finalTarget = getFinalRedirect(pathname)
-
+  const finalTarget = getFinalRedirect(request)
   if (finalTarget) {
-    return NextResponse.redirect(new URL(finalTarget, request.url))
+    return NextResponse.redirect(finalTarget)
   }
 
   // Fallthrough
