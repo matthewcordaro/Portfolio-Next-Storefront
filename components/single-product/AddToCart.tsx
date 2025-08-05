@@ -2,8 +2,8 @@ import { Button } from "../ui/button"
 
 function AddToCart({ productId }: { productId: string }) {
   return (
-    <Button className='mt-8' size={"lg"}>
-      Add To Cart
+    <Button className='mt-8 capitalize' size={"lg"}>
+      add to cart
     </Button>
   )
 }
