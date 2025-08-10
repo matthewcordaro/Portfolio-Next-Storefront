@@ -23,7 +23,7 @@ function FormContainer({
       toast({ description: state.message })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.message])
+  }, [state])
   return <form action={formAction}>{children}</form>
 }
 export default FormContainer
