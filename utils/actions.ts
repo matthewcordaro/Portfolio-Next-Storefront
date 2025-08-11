@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import db from "./db"
 import { currentUser, User } from "@clerk/nextjs/server"
 import { imageSchema, productSchema, validateWithZodSchema } from "./schema"
-import { uploadImage } from "./supabase"
+import { deleteImage, supabase, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
 
@@ -158,7 +158,6 @@ export const createProductAction = async (
   redirect("/admin/products")
 }
 
-
 /**
  * Deletes a product from the database by its ID.
  *
@@ -175,11 +174,14 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
   const { productId } = prevState
 
   try {
-    await db.product.delete({
+    const product = await db.product.delete({
       where: {
         id: productId,
       },
     })
+
+    await deleteImage(product.image)
+    
     revalidatePath("/admin/products")
     return { message: "product removed" }
   } catch (error) {

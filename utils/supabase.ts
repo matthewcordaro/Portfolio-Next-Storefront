@@ -32,3 +32,17 @@ export const uploadImage = async (image: File) => {
   if (!data) throw new Error("Image upload failed")
   return supabase.storage.from(bucket).getPublicUrl(newName).data.publicUrl
 }
+
+
+/**
+ * Deletes an image from the Supabase storage bucket based on its URL.
+ *
+ * @param url - The full URL of the image to be deleted.
+ * @returns A promise that resolves with the result of the remove operation.
+ * @throws Will throw an error if the image filename or URL is invalid.
+ */
+export const deleteImage = async (url: string) => {
+  const imageName = url.split("/").pop()
+  if (!imageName) throw new Error("Invalid image filename or url")
+  return supabase.storage.from(bucket).remove([imageName])
+}
