@@ -181,10 +181,49 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
     })
 
     await deleteImage(product.image)
-    
+
     revalidatePath("/admin/products")
     return { message: "product removed" }
   } catch (error) {
     return renderError(error)
   }
+}
+
+
+/**
+ * Fetches a product by its ID for admin users.
+ *
+ * This function first ensures that the current user has admin privileges by calling `getAdminUser()`.
+ * It then attempts to retrieve the product with the specified `productId` from the database.
+ * If the product does not exist, the user is redirected to the admin products page.
+ *
+ * @param productId - The unique identifier of the product to fetch.
+ * @returns The product object if found.
+ * @throws Redirects to "/admin/products" if the product is not found.
+ */
+export const fetchAdminProduct = async (productId: string) => {
+  await getAdminUser()
+  const product = await db.product.findUnique({
+    where: {
+      id: productId,
+    },
+  })
+  if (!product) redirect("/admin/products")
+  return product
+}
+
+
+export const updateProductAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  return { message: "Product updated successfully" }
+}
+
+
+export const updateProductImageAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  return { message: "Product Image updated successfully" }
 }
