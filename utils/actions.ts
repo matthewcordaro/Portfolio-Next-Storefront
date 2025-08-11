@@ -279,3 +279,28 @@ export const updateProductImageAction = async (
     return renderError(error)
   }
 }
+
+/**
+ * Retrieves the ID of a favorite entry for the authenticated user and specified product.
+ *
+ * @param params - An object containing the product ID to search for.
+ * @param params.productId - The ID of the product to check for a favorite entry.
+ * @returns A promise that resolves to the favorite ID if found, or `null` if not found.
+ */
+export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
+  const user = await getAuthUser()
+  const favorite = await db.favorite.findFirst({
+    where: {
+      productId,
+      clerkId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  })
+  return favorite?.id || null
+}
+
+export const toggleFavoriteAction = async () => {
+  return { message: "toggle favorite action" }
+}
