@@ -5,6 +5,7 @@ import { currentUser, User } from "@clerk/nextjs/server"
 import { imageSchema, productSchema, validateWithZodSchema } from "./schema"
 import { uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
+import { revalidatePath } from "next/cache"
 
 /**
  * Retrieves the currently authenticated user.
@@ -155,4 +156,33 @@ export const createProductAction = async (
     return renderError(error)
   }
   redirect("/admin/products")
+}
+
+
+/**
+ * Deletes a product from the database by its ID.
+ *
+ * This action requires the user to have admin privileges. It attempts to delete
+ * the product specified by `productId` from the database. Upon successful deletion,
+ * it revalidates the admin products page and returns a success message.
+ * If an error occurs during the deletion process, it returns a rendered error.
+ *
+ * @param prevState - An object containing the `productId` of the product to delete.
+ * @returns An object with a success message if the product is removed, or an error if the operation fails.
+ */
+export const deleteProductAction = async (prevState: { productId: string }) => {
+  await getAdminUser()
+  const { productId } = prevState
+
+  try {
+    await db.product.delete({
+      where: {
+        id: productId,
+      },
+    })
+    revalidatePath("/admin/products")
+    return { message: "product removed" }
+  } catch (error) {
+    return renderError(error)
+  }
 }
