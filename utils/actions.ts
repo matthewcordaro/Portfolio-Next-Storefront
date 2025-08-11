@@ -238,10 +238,44 @@ export const updateProductAction = async (
   return { message: "Product updated successfully" }
 }
 
+/**
+ * Updates the image of a product by uploading a new image, deleting the old image,
+ * and updating the product record in the database. Requires admin privileges.
+ *
+ * @param prevState - The previous state, typically used for state management (not used in this function).
+ * @param formData - A FormData object containing:
+ *   - "image": The new image file to upload.
+ *   - "id": The ID of the product to update.
+ *   - "url": The URL of the old image to delete.
+ * @returns An object containing a success message if the operation succeeds,
+ *          or an error message if an error occurs.
+ */
 export const updateProductImageAction = async (
   prevState: any,
   formData: FormData
 ) => {
   await getAdminUser()
-  return { message: "Product Image updated successfully" }
+  try {
+    const image = formData.get("image") as File
+    const productId = formData.get("id") as string
+    const oldImageUrl = formData.get("url") as string
+
+    const validatedFile = validateWithZodSchema(imageSchema, { image })
+    const fullPath = await uploadImage(validatedFile.image)
+
+    await deleteImage(oldImageUrl)
+
+    await db.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        image: fullPath,
+      },
+    })
+    revalidatePath(`/admin/products/${productId}/edit`)
+    return { message: "Product image updated successfully" }
+  } catch (error) {
+    return renderError(error)
+  }
 }
