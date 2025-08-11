@@ -24,7 +24,7 @@ export const supabase = createClient(
  */
 export const uploadImage = async (image: File) => {
   const timestamp = Date.now()
-  const newName = `${timestamp}=${image.name}`
+  const newName = `${timestamp}-${image.name}`
 
   const { data, error } = await supabase.storage
     .from(bucket)
