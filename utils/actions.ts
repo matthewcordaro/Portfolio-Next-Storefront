@@ -189,7 +189,6 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
   }
 }
 
-
 /**
  * Fetches a product by its ID for admin users.
  *
@@ -212,18 +211,37 @@ export const fetchAdminProduct = async (productId: string) => {
   return product
 }
 
-
+/**
+ * Updates a product in the database from form data.
+ *
+ * @param prevState - Previous state (unused).
+ * @param formData - FormData with updated product fields.
+ * @returns Success message or error.
+ */
 export const updateProductAction = async (
   prevState: any,
   formData: FormData
 ) => {
+  await getAdminUser()
+  try {
+    const productId = formData.get("id") as string
+    const rawData = Object.fromEntries(formData)
+    const validatedData = validateWithZodSchema(productSchema, rawData)
+    await db.product.update({
+      where: { id: productId },
+      data: { ...validatedData },
+    })
+    revalidatePath(`/admin/products/${productId}/edit`)
+  } catch (error) {
+    return renderError(error)
+  }
   return { message: "Product updated successfully" }
 }
-
 
 export const updateProductImageAction = async (
   prevState: any,
   formData: FormData
 ) => {
+  await getAdminUser()
   return { message: "Product Image updated successfully" }
 }
