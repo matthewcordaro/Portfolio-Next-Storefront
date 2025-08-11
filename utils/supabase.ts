@@ -1,0 +1,34 @@
+import { createClient } from "@supabase/supabase-js"
+
+const bucket = "product-images"
+
+
+/**
+ * An instance of the Supabase client, configured with the project's URL and API key
+ * from environment variables. Use this client to interact with your Supabase backend
+ * for authentication, database, storage, and other services.
+ *
+ * @see {@link https://supabase.com/docs/reference/javascript/initializing}
+ */
+export const supabase = createClient(
+  process.env.SUPABASE_PROJECT_URL as string,
+  process.env.SUPABASE_PROJECT_API_KEY as string
+)
+
+/**
+ * Uploads an image file to the specified Supabase storage bucket with a unique timestamped name.
+ *
+ * @param image - The image file to upload.
+ * @returns A promise that resolves to the public URL of the uploaded image.
+ * @throws Will throw an error if the image upload fails.
+ */
+export const uploadImage = async (image: File) => {
+  const timestamp = Date.now()
+  const newName = `${timestamp}=${image.name}`
+
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(newName, image, { cacheControl: "3600" })
+  if (!data) throw new Error("Image upload failed")
+  return supabase.storage.from(bucket).getPublicUrl(newName).data.publicUrl
+}
