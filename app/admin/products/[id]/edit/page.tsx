@@ -1,4 +1,8 @@
-import { fetchAdminProduct, updateProductAction } from "@/utils/actions"
+import {
+  fetchAdminProduct,
+  updateProductAction,
+  updateProductImageAction,
+} from "@/utils/actions"
 import FormContainer from "@/components/form/FormContainer"
 import FormInput from "@/components/form/FormInput"
 import PriceInput from "@/components/form/PriceInput"
@@ -8,6 +12,7 @@ import CheckboxInput from "@/components/form/CheckBoxInput"
 import { BsLink45Deg } from "react-icons/bs"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import ImageInputContainer from "@/components/form/ImageInputContainer"
 
 async function EditProductPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -17,6 +22,15 @@ async function EditProductPage({ params }: { params: { id: string } }) {
     <section>
       <h1 className='text-2xl font-semibold mb-8 capitalize'>update product</h1>
       <div className='border p-8 rounded-md'>
+        <ImageInputContainer
+          action={updateProductImageAction}
+          name={name}
+          image={product.image}
+          text='Update Image'
+        >
+          <input type='hidden' name='id' value={id} />
+          <input type='hidden' name='url' value={product.image} />
+        </ImageInputContainer>
         <FormContainer action={updateProductAction}>
           <div className='grid gap-4 md:grid-cols-2 my-4'>
             <input type='hidden' name='id' value={id} />
