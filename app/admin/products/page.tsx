@@ -34,26 +34,24 @@ async function AdminProductsPage() {
         <TableBody>
           {products.map(({ id, name, price, company }) => {
             return (
-              <>
-                <TableRow key={id}>
-                  <TableCell>
-                    <Link
-                      href={`/products/${id}`}
-                      className='underline text-muted-foreground tracking-wide capitalize'
-                    >
-                      {name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{company}</TableCell>
-                  <TableCell>{formatCurrency(price)}</TableCell>
-                  <TableCell className='flex items-center gap-x-2'>
-                    <Link href={`/admin/products/${id}/edit`}>
-                      <IconButton actionType='edit' />
-                    </Link>
-                    <DeleteProduct productId={id} />
-                  </TableCell>
-                </TableRow>
-              </>
+              <TableRow key={id}>
+                <TableCell>
+                  <Link
+                    href={`/products/${id}`}
+                    className='underline text-muted-foreground tracking-wide capitalize'
+                  >
+                    {name}
+                  </Link>
+                </TableCell>
+                <TableCell>{company}</TableCell>
+                <TableCell>{formatCurrency(price)}</TableCell>
+                <TableCell className='flex items-center gap-x-2'>
+                  <Link href={`/admin/products/${id}/edit`}>
+                    <IconButton actionType='edit' />
+                  </Link>
+                  <DeleteProduct productId={id} />
+                </TableCell>
+              </TableRow>
             )
           })}
         </TableBody>
