@@ -4,6 +4,7 @@ import db from "./db"
 import { currentUser, User } from "@clerk/nextjs/server"
 import { imageSchema, productSchema, validateWithZodSchema } from "./schema"
 import { uploadImage } from "./supabase"
+import { getAdminUserIds } from "./env"
 
 /**
  * Retrieves the currently authenticated user.
@@ -15,6 +16,38 @@ const getAuthUser = async (): Promise<User> => {
   const user = await currentUser()
   if (!user) redirect("/")
   return user
+}
+
+/**
+ * Retrieves the currently authenticated user and ensures they have admin privileges.
+ * If the user is not an admin, redirects to the home page.
+ *
+ * @returns {Promise<User>} A promise that resolves to the authenticated admin user.
+ * @throws Redirects to "/" if the user is not an admin.
+ */
+const getAdminUser = async (): Promise<User> => {
+  const user = await getAuthUser()
+  if (!getAdminUserIds().includes(user.id)) redirect("/")
+  return user
+}
+
+/**
+ * Fetches all products from the database for admin users, ordered by creation date in descending order.
+ *
+ * This function first ensures that the current user has admin privileges by calling `getAdminUser()`.
+ * If the user is authorized, it retrieves all products from the database, sorted by the `createdAt` field.
+ *
+ * @returns {Promise<Product[]>} A promise that resolves to an array of product objects.
+ * @throws Will throw an error if the user is not an admin or if the database query fails.
+ */
+export const fetchAdminProducts = async () => {
+  await getAdminUser()
+  const products = await db.product.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+  return products
 }
 
 /**
@@ -106,7 +139,9 @@ export const createProductAction = async (
     const data = Object.fromEntries(formData)
     const validatedData = validateWithZodSchema(productSchema, data)
     const file = formData.get("image") as File
-    const validatedImageFile = validateWithZodSchema(imageSchema, { image: file })
+    const validatedImageFile = validateWithZodSchema(imageSchema, {
+      image: file,
+    })
     const fullPath = await uploadImage(validatedImageFile.image)
 
     await db.product.create({
@@ -116,9 +151,8 @@ export const createProductAction = async (
         clerkId: user.id,
       },
     })
-
   } catch (error) {
     return renderError(error)
   }
-  redirect('/admin/products')
+  redirect("/admin/products")
 }
