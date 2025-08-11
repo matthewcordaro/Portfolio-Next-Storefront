@@ -15,13 +15,13 @@ import { IconButton } from "@/components/form/Buttons"
 import FormContainer from "@/components/form/FormContainer"
 
 async function AdminProductsPage() {
-  const items = await fetchAdminProducts()
-  if (items.length === 0) return <EmptyList />
+  const products = await fetchAdminProducts()
+  if (products.length === 0) return <EmptyList />
   return (
     <section>
       <Table>
         <TableCaption className='capitalize'>
-          total products : {items.length}
+          total products : {products.length}
         </TableCaption>
         <TableHeader>
           <TableRow className='capitalize'>
@@ -32,7 +32,7 @@ async function AdminProductsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map(({ id, name, price, company }) => {
+          {products.map(({ id, name, price, company }) => {
             return (
               <>
                 <TableRow key={id}>
