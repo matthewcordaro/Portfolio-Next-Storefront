@@ -301,6 +301,44 @@ export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
   return favorite?.id || null
 }
 
-export const toggleFavoriteAction = async () => {
-  return { message: "toggle favorite action" }
+/**
+ * Toggles the favorite status of a product for the authenticated user.
+ *
+ * If a `favoriteId` is provided, the favorite entry is deleted (removing the product from favorites).
+ * If no `favoriteId` is provided, a new favorite entry is created (adding the product to favorites).
+ * After the operation, the specified path is revalidated.
+ *
+ * @param prevState - An object containing:
+ *   - `productId`: The ID of the product to toggle favorite status for.
+ *   - `favoriteId`: The ID of the favorite entry if it exists, or `null` if not.
+ *   - `pathname`: The path to revalidate after the operation.
+ * @returns An object with a `message` indicating the result, or an error rendered by `renderError`.
+ */
+export const toggleFavoriteAction = async (prevState: {
+  productId: string
+  favoriteId: string | null
+  pathname: string
+}) => {
+  const user = await getAuthUser()
+  const { productId, favoriteId, pathname } = prevState
+  try {
+    if (favoriteId) {
+      await db.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      })
+    } else {
+      await db.favorite.create({
+        data: {
+          productId,
+          clerkId: user.id,
+        },
+      })
+    }
+    revalidatePath(pathname)
+    return { message: favoriteId ? "Removed from Faves" : "Added to Faves" }
+  } catch (error) {
+    return renderError(error)
+  }
 }
