@@ -2,6 +2,8 @@
 import { redirect } from "next/navigation"
 import db from "./db"
 import { currentUser, User } from "@clerk/nextjs/server"
+import { imageSchema, productSchema, validateWithZodSchema } from "./schema"
+import { uploadImage } from "./supabase"
 
 const getAuthUser = async (): Promise<User> => {
   const user = await currentUser()
@@ -54,5 +56,25 @@ export const createProductAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> => {
-  return { message: "Product created successfully" }
+  const user = await getAuthUser()
+
+  try {
+    const data = Object.fromEntries(formData)
+    const validatedData = validateWithZodSchema(productSchema, data)
+    const file = formData.get("image") as File
+    const validatedImageFile = validateWithZodSchema(imageSchema, { image: file })
+    const fullPath = await uploadImage(validatedImageFile.image)
+
+    await db.product.create({
+      data: {
+        ...validatedData,
+        image: fullPath,
+        clerkId: user.id,
+      },
+    })
+
+  } catch (error) {
+    return renderError(error)
+  }
+  redirect('/admin/products')
 }
