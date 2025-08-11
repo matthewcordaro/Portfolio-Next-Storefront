@@ -46,12 +46,11 @@ async function EditProductPage({ params }: { params: { id: string } }) {
               defaultChecked={featured}
             />
           </div>
-          <div className='grid-cols space-x-4'>
-            <SubmitButton text='update product' className='mt-8' />
+          <div className='flex space-x-4 mt-8 items-center'>
+            <SubmitButton text='update product' />
             <Link href={`/products/${id}`}>
-              <Button className='mt-8 capitalize' size={"lg"} variant="link">
-                <BsLink45Deg className='h-4 w-4' />
-                View Product
+              <Button size='icon' variant='secondary'>
+                <BsLink45Deg />
               </Button>
             </Link>
           </div>
