@@ -78,7 +78,7 @@ export function CardSignInButton() {
         className='p-2 cursor-pointer'
         asChild
       >
-        <BsHeartFill />
+        <BsHeart />
       </Button>
     </SignInButton>
   )
