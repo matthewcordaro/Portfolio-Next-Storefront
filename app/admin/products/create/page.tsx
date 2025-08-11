@@ -7,7 +7,7 @@ import PriceInput from "@/components/form/PriceInput"
 import ImageInput from "@/components/form/ImageInput"
 import TextAreaInput from "@/components/form/TextAreaInput"
 import CheckBoxInput from "@/components/form/CheckBoxInput"
-import SubmitButton from "@/components/form/Buttons"
+import { SubmitButton } from "@/components/form/Buttons"
 
 function CreateProductPage() {
   const name = faker.commerce.productName()
