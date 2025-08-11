@@ -45,6 +45,7 @@ function LinksDropdown() {
             </SignUpButton>
           </SignedOut>
           <SignedIn>
+            {/* TODO: disable links for users not logged in */}
             {links.map((link) => {
               if (link.label === "dashboard" && !isAdmin) return null
               return (
