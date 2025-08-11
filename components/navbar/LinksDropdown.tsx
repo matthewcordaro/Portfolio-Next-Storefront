@@ -13,6 +13,7 @@ import UserIcon from "./UserIcon"
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
 import SignOutLink from "./SignOutLink"
 import { auth } from "@clerk/nextjs/server"
+import { getAdminUserIds } from "@/utils/env"
 
 // TODO: Fix the logout bug where the menu doesn't disappear.
 // This will require moving any server-only logic out of UserIcon.tsx and into
@@ -21,7 +22,7 @@ import { auth } from "@clerk/nextjs/server"
 
 function LinksDropdown() {
   const { userId } = auth()
-  const isAdmin = userId === process.env.ADMIN_USER_ID
+  const isAdmin = userId !== null && getAdminUserIds().includes(userId)
   return (
     <>
       <DropdownMenu>

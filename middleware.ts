@@ -3,6 +3,7 @@ import {
   createRouteMatcher,
 } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
+import { getAdminUserIds } from "./utils/env"
 
 // Declare redirect mappings
 const redirects: Record<string, string> = {
@@ -48,8 +49,9 @@ export const config = {
 
 export default middleware((auth, request) => {
   // Unauthorized
-  const isAdminUser = auth().userId === process.env.ADMIN_USER_ID
-  if (isAdminRoute(request) && !isAdminUser) {
+  const { userId } = auth()
+  const isAdmin = userId !== null && getAdminUserIds().includes(userId)
+  if (isAdminRoute(request) && !isAdmin) {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
