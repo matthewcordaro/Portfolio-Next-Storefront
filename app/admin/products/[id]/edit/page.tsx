@@ -5,6 +5,9 @@ import PriceInput from "@/components/form/PriceInput"
 import TextAreaInput from "@/components/form/TextAreaInput"
 import { SubmitButton } from "@/components/form/Buttons"
 import CheckboxInput from "@/components/form/CheckBoxInput"
+import { BsLink45Deg } from "react-icons/bs"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 async function EditProductPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -43,7 +46,15 @@ async function EditProductPage({ params }: { params: { id: string } }) {
               defaultChecked={featured}
             />
           </div>
-          <SubmitButton text='update product' className='mt-8' />
+          <div className='grid-cols space-x-4'>
+            <SubmitButton text='update product' className='mt-8' />
+            <Link href={`/products/${id}`}>
+              <Button className='mt-8 capitalize' size={"lg"} variant="link">
+                <BsLink45Deg className='h-4 w-4' />
+                View Product
+              </Button>
+            </Link>
+          </div>
         </FormContainer>
       </div>
     </section>
