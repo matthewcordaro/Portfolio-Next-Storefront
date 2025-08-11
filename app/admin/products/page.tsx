@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { IconButton } from "@/components/form/Buttons"
-import { Icon } from "lucide-react"
 import FormContainer from "@/components/form/FormContainer"
 
 async function AdminProductsPage() {
