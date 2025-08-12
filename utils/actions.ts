@@ -384,7 +384,6 @@ export const fetchUserFavorites = async () => {
  */
 export const createReviewAction = async (_prevState: any, formData: FormData) => {
   const user = await getAuthUser()
-  console.log(formData)
   try {
     const rawData = Object.fromEntries(formData)
     const validatedData = validateWithZodSchema(reviewSchema, rawData)
