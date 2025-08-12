@@ -1,15 +1,12 @@
-import { BsStar } from "react-icons/bs"
+import { fetchProductRating } from "@/utils/actions"
+import Rating from "../reviews/Rating"
 
-function ProductRating({ productId }: { productId: string }) {
-  // TODO: implement dynamic count and rating
-  const rating = 4.2
-  const count = 25
+async function ProductRating({ productId }: { productId: string }) {
+  const { rating, count } = await fetchProductRating(productId)
 
-  const className = `flex gap-1 items-center text-md mt-1 mb-4`
-  const countValue = `(${count}) reviews`
   return (
-    <span className={className}>
-      <BsStar className='w-3 h-3' /> {rating} ({count})
+    <span className='flex gap-1 items-center text-md mt-1 mb-4'>
+      <Rating rating={Number(rating)} /> {rating} ({count})
     </span>
   )
 }
