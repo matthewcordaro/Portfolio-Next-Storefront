@@ -105,7 +105,7 @@ export const reviewSchema = z.object({
   authorImageUrl: z
     .string()
     .url({ message: "Must be a valid url" }),
-  rating: z
+  rating: z.coerce
     .number()
     .int()
     .min(1, { message: "Min rating of 1" })
