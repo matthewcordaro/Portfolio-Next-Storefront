@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: process.env.SUPABASE_PROJECT_HOSTNAME,
       },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
     ],
   },
 }
