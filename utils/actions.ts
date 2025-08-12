@@ -2,7 +2,12 @@
 import { redirect } from "next/navigation"
 import db from "./db"
 import { currentUser, User } from "@clerk/nextjs/server"
-import { imageSchema, productSchema, validateWithZodSchema } from "./schema"
+import {
+  imageSchema,
+  productSchema,
+  reviewSchema,
+  validateWithZodSchema,
+} from "./schema"
 import { deleteImage, supabase, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
@@ -365,9 +370,39 @@ export const fetchUserFavorites = async () => {
   return favorites
 }
 
-export const createReviewAction = async () => {}
+/**
+ * Handles the creation of a new review by validating form data and saving the review to the database.
+ * Revalidates the product page upon success and returns a message indicating the result.
+ *
+ * @param formData - The form data containing review details.
+ * @returns A promise that resolves to an object containing a message string.
+ */
+export const createReviewAction = async (
+  formData: FormData
+) => {
+  const user = await getAuthUser()
+  try {
+    const rawData = Object.fromEntries(formData)
+    const validatedData = validateWithZodSchema(reviewSchema, rawData)
+    await db.review.create({
+      data: {
+        ...validatedData,
+        clerkId: user.id,
+      },
+    })
+    revalidatePath(`/products/${validatedData.productId}`)
+    return { message: "review submitted successfully" }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
 export const fetchProductReviews = async () => {}
+
 export const fetchProductReviewsByUser = async () => {}
+
 export const deleteReviewAction = async () => {}
+
 export const findExistingReview = async () => {}
+
 export const fetchProductRating = async () => {}
