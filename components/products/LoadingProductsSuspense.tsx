@@ -2,7 +2,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "../ui/skeleton"
 import SectionTitle from "../global/SectionTitle"
 
-function LoadingProductsSuspense({ text, className }: { text?: string, className?: string }) {
+function LoadingProducts({
+  text,
+  className,
+}: {
+  text?: string
+  className?: string
+}) {
   return (
     <section className={className}>
       {text && <SectionTitle text={text} /> /* add section title if defined */}
@@ -26,4 +32,4 @@ function LoadingProduct() {
     </Card>
   )
 }
-export default LoadingProductsSuspense
+export default LoadingProducts
