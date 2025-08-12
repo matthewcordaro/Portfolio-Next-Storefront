@@ -371,16 +371,20 @@ export const fetchUserFavorites = async () => {
 }
 
 /**
- * Handles the creation of a new review by validating form data and saving the review to the database.
- * Revalidates the product page upon success and returns a message indicating the result.
+ * Handles the creation of a product review.
  *
- * @param formData - The form data containing review details.
- * @returns A promise that resolves to an object containing a message string.
+ * This asynchronous action receives the previous state and a FormData object,
+ * validates the form data using a Zod schema, and creates a new review in the database.
+ * The authenticated user's ID is attached to the review. After successful creation,
+ * the relevant product page is revalidated. Returns a success message or an error response.
+ *
+ * @param _prevState - The previous state, not used in this function.
+ * @param formData - The FormData object containing review data from the client.
+ * @returns An object with a success message or an error rendered by `renderError`.
  */
-export const createReviewAction = async (
-  formData: FormData
-) => {
+export const createReviewAction = async (_prevState: any, formData: FormData) => {
   const user = await getAuthUser()
+  console.log(formData)
   try {
     const rawData = Object.fromEntries(formData)
     const validatedData = validateWithZodSchema(reviewSchema, rawData)
