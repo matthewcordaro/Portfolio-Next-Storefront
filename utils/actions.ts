@@ -382,7 +382,10 @@ export const fetchUserFavorites = async () => {
  * @param formData - The FormData object containing review data from the client.
  * @returns An object with a success message or an error rendered by `renderError`.
  */
-export const createReviewAction = async (_prevState: any, formData: FormData) => {
+export const createReviewAction = async (
+  _prevState: any,
+  formData: FormData
+) => {
   const user = await getAuthUser()
   try {
     const rawData = Object.fromEntries(formData)
@@ -400,7 +403,23 @@ export const createReviewAction = async (_prevState: any, formData: FormData) =>
   }
 }
 
-export const fetchProductReviews = async () => {}
+/**
+ * Fetches all reviews for a given product, ordered by creation date in descending order.
+ *
+ * @param productId - The unique identifier of the product whose reviews are to be fetched.
+ * @returns A promise that resolves to an array of review objects associated with the specified product.
+ */
+export const fetchProductReviews = async (productId: string) => {
+  const reviews = await db.review.findMany({
+    where: {
+      productId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+  return reviews
+}
 
 export const fetchProductReviewsByUser = async () => {}
 
