@@ -88,3 +88,30 @@ function validateImageFile() {
       )
     }, "File must be an image")
 }
+
+/**
+ * Zod schema for validating product review objects.
+ *
+ * Fields:
+ * - `productId`: The ID of the product being reviewed, must be a non-empty string.
+ * - `authorName`: The name of the review's author, must be a non-empty string.
+ * - `authorImageUrl`: URL to the author's image, must be a valid URL.
+ * - `rating`: The review rating, must be an integer between 1 and 5.
+ * - `comment`: The review comment, must be a string between 10 and 2000 characters.
+ */
+export const reviewSchema = z.object({
+  productId: z.string().min(1, { message: "Product ID cannot be empty" }),
+  authorName: z.string().min(1, { message: "Author name cannot be empty" }),
+  authorImageUrl: z
+    .string()
+    .url({ message: "Must be a valid url" }),
+  rating: z
+    .number()
+    .int()
+    .min(1, { message: "Min rating of 1" })
+    .max(5, { message: "max rating of 5" }),
+  comment: z
+    .string()
+    .min(10, { message: "Comment must be at least 10 characters" })
+    .max(2000, { message: "Comment must be at most 2000 characters" }),
+})
