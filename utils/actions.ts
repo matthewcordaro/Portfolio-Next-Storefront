@@ -421,10 +421,40 @@ export const fetchProductReviews = async (productId: string) => {
   return reviews
 }
 
+/**
+ * Fetches the average rating and total number of ratings for a given product.
+ *
+ * Groups reviews by the specified product ID, calculates the average rating,
+ * and counts the number of ratings. Returns an object containing the average
+ * rating (rounded to one decimal place) and the count of ratings. If there are
+ * no reviews for the product, returns 0 for both rating and count.
+ *
+ * @param productId - The unique identifier of the product to fetch ratings for.
+ * @returns An object with the average rating (`rating`) and the number of ratings (`count`).
+ */
+export const fetchProductRating = async (productId: string) => {
+  const result = await db.review.groupBy({
+    by: ["productId"],
+    _avg: {
+      rating: true,
+    },
+    _count: {
+      rating: true,
+    },
+    where: {
+      productId,
+    },
+  })
+
+  // empty array if no reviews
+  return {
+    rating: result[0]?._avg.rating?.toFixed(1) ?? 0,
+    count: result[0]?._count.rating ?? 0,
+  }
+}
+
 export const fetchProductReviewsByUser = async () => {}
 
 export const deleteReviewAction = async () => {}
 
 export const findExistingReview = async () => {}
-
-export const fetchProductRating = async () => {}
