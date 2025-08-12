@@ -342,3 +342,25 @@ export const toggleFavoriteAction = async (prevState: {
     return renderError(error)
   }
 }
+
+/**
+ * Fetches the list of favorite products for the currently authenticated user.
+ *
+ * This function retrieves the authenticated user's information and queries the database
+ * for all favorite entries associated with the user's Clerk ID. Each favorite entry includes
+ * the related product details.
+ *
+ * @returns A promise that resolves to an array of favorite entries, each including the associated product.
+ */
+export const fetchUserFavorites = async () => {
+  const user = await getAuthUser()
+  const favorites = db.favorite.findMany({
+    where: {
+      clerkId: user.id,
+    },
+    include: {
+      product: true,
+    },
+  })
+  return favorites
+}
