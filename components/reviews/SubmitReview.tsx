@@ -15,11 +15,9 @@ function SubmitReview({ productId }: { productId: string }) {
   return (
     <div>
       <Button
+        size='lg'
         className='capitalize'
-        size={"lg"}
-        onClick={() => {
-          setIsReviewFormVisible((prev) => !prev)
-        }}
+        onClick={() => setIsReviewFormVisible((prev) => !prev)}
       >
         leave review
       </Button>
@@ -41,7 +39,7 @@ function SubmitReview({ productId }: { productId: string }) {
             <TextAreaInput
               name='comment'
               labelText='feedback'
-              defaultValue='Wonderful'
+              defaultValue='Outstanding product!!!'
             />
             <SubmitButton className='mt-4' />
           </FormContainer>
@@ -50,4 +48,5 @@ function SubmitReview({ productId }: { productId: string }) {
     </div>
   )
 }
+
 export default SubmitReview
