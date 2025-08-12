@@ -1,9 +1,12 @@
 "use client"
 
-import LoadingProducts from "@/components/products/LoadingProductsSuspense"
+import LoadingProductsContainer from "@/components/products/LoadingProductsContainer"
 
 const loading = () => (
-  <LoadingProducts text='loading products...' className='font-medium text-lg' />
+  <LoadingProductsContainer
+    text='loading products...'
+    className='font-medium text-lg'
+  />
 )
 
 export default loading

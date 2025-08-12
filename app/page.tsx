@@ -1,5 +1,5 @@
 import FeaturedProducts from "@/components/home/FeaturedProducts"
-import LoadingProducts from "@/components/products/LoadingProductsSuspense"
+import LoadingProductsContainer from "@/components/products/LoadingProductsContainer"
 import Hero from "@/components/home/Hero"
 import { Suspense } from "react"
 
@@ -9,7 +9,10 @@ function HomePage() {
       <Hero />
       <Suspense
         fallback={
-          <LoadingProducts text='Featured products' className='pt-24' />
+          <LoadingProductsContainer
+            text='Featured products'
+            className='pt-24'
+          />
         }
       >
         <FeaturedProducts />

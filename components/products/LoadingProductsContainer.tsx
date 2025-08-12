@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "../ui/skeleton"
 import SectionTitle from "../global/SectionTitle"
 
-function LoadingProducts({
+function LoadingProductsContainer({
   text,
   className,
 }: {
@@ -32,4 +32,4 @@ function LoadingProduct() {
     </Card>
   )
 }
-export default LoadingProducts
+export default LoadingProductsContainer
