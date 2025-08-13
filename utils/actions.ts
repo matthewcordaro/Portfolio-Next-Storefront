@@ -1,7 +1,7 @@
 "use server"
 import { redirect } from "next/navigation"
 import db from "./db"
-import { currentUser, User } from "@clerk/nextjs/server"
+import { auth, currentUser, User } from "@clerk/nextjs/server"
 import {
   imageSchema,
   productSchema,
@@ -531,7 +531,27 @@ export const findExistingReview = async (userId: string, productId: string) => {
   })
 }
 
-export const fetchCartItems = async () => {}
+/**
+ * Fetches the number of items in the current user's cart.
+ *
+ * This function retrieves the authenticated user's ID, queries the database for the cart
+ * associated with that user, and returns the number of items in the cart. If no cart is found,
+ * it returns 0.
+ *
+ * @returns {Promise<number>} The number of items in the user's cart, or 0 if no cart exists.
+ */
+export const fetchCartItems = async () => {
+  const {userId} = auth()
+  const cart = await db.cart.findFirst({
+    where:{
+      clerkId: userId ?? ""
+    },
+    select:{
+      numItemsInCart:true
+    }
+  })
+  return cart?.numItemsInCart || 0
+}
 
 const fetchProduct = async () => {}
 
