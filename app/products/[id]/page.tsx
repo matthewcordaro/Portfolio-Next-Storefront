@@ -1,5 +1,4 @@
 import BreadCrumbs from "@/components/single-product/BreadCrumbs"
-import { fetchSingleProduct } from "@/utils/actions"
 import Image from "next/image"
 import { formatCurrency } from "@/utils/format"
 import FavoriteToggleButton from "@/components/products/FavoriteToggleButton"
@@ -8,12 +7,16 @@ import ProductRating from "@/components/single-product/ProductRating"
 import ShareButton from "@/components/single-product/ShareButton"
 import SubmitReview from "@/components/reviews/SubmitReview"
 import ProductReviews from "@/components/reviews/ProductReviews"
+import { fetchSingleProduct, findExistingReview } from "@/utils/actions"
+import { auth } from "@clerk/nextjs/server"
 
 
 async function SingleProductPage({ params }: { params: { id: string } }) {
   const product = await fetchSingleProduct(params.id)
-  const { name, image, company, description, id } = product
+  const { name, image, company, description } = product
   const dollarAmount = formatCurrency(product.price)
+  const {userId} = auth()
+  const reviewDoesNotExist = userId && !(await findExistingReview(userId, product.id))
   return (
     <section>
       <BreadCrumbs name={name} />
@@ -34,21 +37,21 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
           <div className='flex gap-x-8 items-center'>
             <h1 className='capitalize text-3xl font-bold'>{name}</h1>
             <div className='flex items-center gap-x-2'>
-              <FavoriteToggleButton productId={id} />
-              <ShareButton name={name} productId={id} />
+              <FavoriteToggleButton productId={product.id} />
+              <ShareButton name={name} productId={product.id} />
             </div>
           </div>
-          <ProductRating productId={id} />
+          <ProductRating productId={product.id} />
           <h4 className='text-xl mt-2'>{company}</h4>
           <p className='mt-3 text-md bg-muted inline-block p-2 rounded-md'>
             {dollarAmount}
           </p>
           <p className='mt-6 leading-8 text-muted-foreground'>{description}</p>
-          <AddToCart productId={id} />
+          <AddToCart productId={product.id} />
         </div>
       </div>
-      <ProductReviews productId={id}/>
-      <SubmitReview productId={id}/>
+      <ProductReviews productId={product.id} />
+      {reviewDoesNotExist && <SubmitReview productId={product.id} />}
     </section>
   )
 }
