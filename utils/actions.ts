@@ -11,6 +11,8 @@ import {
 import { deleteImage, supabase, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
+import { Product, Cart, Favorite, Review, CartItem } from "@prisma/client"
+import { Message, UserProductReview, ActionFunction } from "./types"
 
 /**
  * Retrieves the currently authenticated user.
@@ -46,7 +48,7 @@ const getAdminUser = async (): Promise<User> => {
  * @returns {Promise<Product[]>} A promise that resolves to an array of product objects.
  * @throws Will throw an error if the user is not an admin or if the database query fails.
  */
-export const fetchAdminProducts = async () => {
+export const fetchAdminProducts = async (): Promise<Product[]> => {
   await getAdminUser()
   const products = await db.product.findMany({
     orderBy: {
@@ -63,7 +65,7 @@ export const fetchAdminProducts = async () => {
  * @returns An object containing a `message` property with the error message if the input is an `Error`,
  *          or a generic message if the error type is unknown.
  */
-function renderError(error: unknown) {
+function renderError(error: unknown): Message {
   console.log(error)
   return {
     message:
@@ -76,7 +78,7 @@ function renderError(error: unknown) {
  *
  * @returns A promise that resolves to an array of featured products, ordered by creation date in descending order.
  */
-export const fetchFeatureProducts = async () => {
+export const fetchFeatureProducts = async (): Promise<Product[]> => {
   return await db.product.findMany({
     where: {
       featured: true,
@@ -97,7 +99,7 @@ export const fetchFeatureProducts = async () => {
  * @param params.search - The search string to filter products by name or company. Defaults to an empty string.
  * @returns A promise that resolves to an array of matching products.
  */
-export const fetchAllProducts = async ({ search = "" }) => {
+export const fetchAllProducts = async ({ search = "" }): Promise<Product[]> => {
   return await db.product.findMany({
     where: {
       OR: [
@@ -118,7 +120,9 @@ export const fetchAllProducts = async ({ search = "" }) => {
  * @returns A promise that resolves to the product object if found.
  * @throws Redirects to the "/products" page if the product is not found.
  */
-export const fetchSingleProduct = async (productId: string) => {
+export const fetchSingleProduct = async (
+  productId: string
+): Promise<Product> => {
   const product = await db.product.findUnique({
     where: { id: productId },
   })
@@ -135,10 +139,10 @@ export const fetchSingleProduct = async (productId: string) => {
  * @param formData - The form data containing product details and an image file.
  * @returns A promise that resolves to an object containing a message string.
  */
-export const createProductAction = async (
-  prevState: any,
-  formData: FormData
-): Promise<{ message: string }> => {
+export const createProductAction: ActionFunction = async (
+  prevState,
+  formData
+) => {
   const user = await getAuthUser()
 
   try {
@@ -174,7 +178,9 @@ export const createProductAction = async (
  * @param prevState - An object containing the `productId` of the product to delete.
  * @returns An object with a success message if the product is removed, or an error if the operation fails.
  */
-export const deleteProductAction = async (prevState: { productId: string }) => {
+export const deleteProductAction = async (prevState: {
+  productId: string
+}): Promise<Message> => {
   await getAdminUser()
   const { productId } = prevState
 
@@ -205,7 +211,9 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
  * @returns The product object if found.
  * @throws Redirects to "/admin/products" if the product is not found.
  */
-export const fetchAdminProduct = async (productId: string) => {
+export const fetchAdminProduct = async (
+  productId: string
+): Promise<Product> => {
   await getAdminUser()
   const product = await db.product.findUnique({
     where: {
@@ -223,9 +231,9 @@ export const fetchAdminProduct = async (productId: string) => {
  * @param formData - FormData with updated product fields.
  * @returns Success message or error.
  */
-export const updateProductAction = async (
-  prevState: any,
-  formData: FormData
+export const updateProductAction: ActionFunction = async (
+  prevState,
+  formData
 ) => {
   await getAdminUser()
   try {
@@ -255,9 +263,9 @@ export const updateProductAction = async (
  * @returns An object containing a success message if the operation succeeds,
  *          or an error message if an error occurs.
  */
-export const updateProductImageAction = async (
-  prevState: any,
-  formData: FormData
+export const updateProductImageAction: ActionFunction = async (
+  prevState,
+  formData
 ) => {
   await getAdminUser()
   try {
@@ -292,7 +300,11 @@ export const updateProductImageAction = async (
  * @param params.productId - The ID of the product to check for a favorite entry.
  * @returns A promise that resolves to the favorite ID if found, or `null` if not found.
  */
-export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
+export const fetchFavoriteId = async ({
+  productId,
+}: {
+  productId: string
+}): Promise<string | null> => {
   const user = await getAuthUser()
   const favorite = await db.favorite.findFirst({
     where: {
@@ -323,7 +335,7 @@ export const toggleFavoriteAction = async (prevState: {
   productId: string
   favoriteId: string | null
   pathname: string
-}) => {
+}): Promise<Message> => {
   const user = await getAuthUser()
   const { productId, favoriteId, pathname } = prevState
   try {
@@ -357,7 +369,7 @@ export const toggleFavoriteAction = async (prevState: {
  *
  * @returns A promise that resolves to an array of favorite entries, each including the associated product.
  */
-export const fetchUserFavorites = async () => {
+export const fetchUserFavorites = async (): Promise<Favorite[]> => {
   const user = await getAuthUser()
   const favorites = db.favorite.findMany({
     where: {
@@ -382,9 +394,9 @@ export const fetchUserFavorites = async () => {
  * @param formData - The FormData object containing review data from the client.
  * @returns An object with a success message or an error rendered by `renderError`.
  */
-export const createReviewAction = async (
-  _prevState: any,
-  formData: FormData
+export const createReviewAction: ActionFunction = async (
+  _prevState,
+  formData
 ) => {
   const user = await getAuthUser()
   try {
@@ -409,7 +421,9 @@ export const createReviewAction = async (
  * @param productId - The unique identifier of the product whose reviews are to be fetched.
  * @returns A promise that resolves to an array of review objects associated with the specified product.
  */
-export const fetchProductReviews = async (productId: string) => {
+export const fetchProductReviews = async (
+  productId: string
+): Promise<Review[]> => {
   const reviews = await db.review.findMany({
     where: {
       productId,
@@ -422,17 +436,16 @@ export const fetchProductReviews = async (productId: string) => {
 }
 
 /**
- * Fetches the average rating and total number of ratings for a given product.
- *
- * Groups reviews by the specified product ID, calculates the average rating,
- * and counts the number of ratings. Returns an object containing the average
- * rating (rounded to one decimal place) and the count of ratings. If there are
- * no reviews for the product, returns 0 for both rating and count.
+ * Fetches the average rating and total count of reviews for a given product.
  *
  * @param productId - The unique identifier of the product to fetch ratings for.
- * @returns An object with the average rating (`rating`) and the number of ratings (`count`).
+ * @returns A promise that resolves to an object containing:
+ * - `rating`: The average rating (rounded to one decimal place), or 0 if there are no reviews.
+ * - `count`: The total number of ratings for the product.
  */
-export const fetchProductRating = async (productId: string) => {
+export const fetchProductRating = async (
+  productId: string
+): Promise<{ rating: number; count: number }> => {
   const result = await db.review.groupBy({
     by: ["productId"],
     _avg: {
@@ -448,7 +461,9 @@ export const fetchProductRating = async (productId: string) => {
 
   // empty array if no reviews
   return {
-    rating: result[0]?._avg.rating?.toFixed(1) ?? 0,
+    rating: result[0]?._avg.rating
+      ? Number(result[0]._avg.rating.toFixed(1))
+      : 0,
     count: result[0]?._count.rating ?? 0,
   }
 }
@@ -465,7 +480,9 @@ export const fetchProductRating = async (productId: string) => {
  *
  * @throws {Error} If the user is not authenticated or if the database query fails.
  */
-export const fetchProductReviewsByUser = async () => {
+export const fetchProductReviewsByUser = async (): Promise<
+  UserProductReview[]
+> => {
   const user = await getAuthUser()
   const reviews = await db.review.findMany({
     where: {
@@ -497,7 +514,9 @@ export const fetchProductReviewsByUser = async () => {
  * - This function requires the user to be authenticated.
  * - After successful deletion, it triggers a revalidation of the "/reviews" path.
  */
-export const deleteReviewAction = async (prevState: { reviewId: string }) => {
+export const deleteReviewAction = async (prevState: {
+  reviewId: string
+}): Promise<Message> => {
   const { reviewId } = prevState
   const user = await getAuthUser()
 
@@ -522,7 +541,10 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
  * @param productId - The unique identifier of the product.
  * @returns A promise that resolves to the first matching review, or `null` if none is found.
  */
-export const findExistingReview = async (userId: string, productId: string) => {
+export const findExistingReview = async (
+  userId: string,
+  productId: string
+): Promise<Review | null> => {
   return db.review.findFirst({
     where: {
       clerkId: userId,
@@ -540,7 +562,7 @@ export const findExistingReview = async (userId: string, productId: string) => {
  *
  * @returns {Promise<number>} The number of items in the user's cart, or 0 if no cart exists.
  */
-export const fetchCartItems = async () => {
+export const fetchCartItems = async (): Promise<number> => {
   const { userId } = auth()
   const cart = await db.cart.findFirst({
     where: {
@@ -561,10 +583,7 @@ const updateOrCreateCartItem = async () => {}
 
 export const updateCart = async () => {}
 
-export const addToCartAction = async (
-  prevState: any,
-  formData: FormData
-): Promise<{ message: string }> => {
+export const addToCartAction: ActionFunction = async (prevState, formData) => {
   return { message: "TODO: add to cart action" }
 }
 
