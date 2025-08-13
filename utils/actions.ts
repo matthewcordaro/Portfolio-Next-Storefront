@@ -20,7 +20,7 @@ import { Message, UserProductReview, ActionFunction } from "./types"
  * @returns {Promise<User>} A promise that resolves to the authenticated user.
  * @throws Redirects to the root path ("/") if no user is authenticated.
  */
-const getAuthUser = async (): Promise<User> => {
+async function getAuthUser(): Promise<User> {
   const user = await currentUser()
   if (!user) redirect("/")
   return user
@@ -33,7 +33,7 @@ const getAuthUser = async (): Promise<User> => {
  * @returns {Promise<User>} A promise that resolves to the authenticated admin user.
  * @throws Redirects to "/" if the user is not an admin.
  */
-const getAdminUser = async (): Promise<User> => {
+async function getAdminUser(): Promise<User> {
   const user = await getAuthUser()
   if (!getAdminUserIds().includes(user.id)) redirect("/")
   return user
@@ -575,17 +575,17 @@ export const fetchCartItems = async (): Promise<number> => {
   return cart?.numItemsInCart || 0
 }
 
-const fetchProduct = async () => {}
-
-export const fetchOrCreateCart = async () => {}
-
-const updateOrCreateCartItem = async () => {}
-
-export const updateCart = async () => {}
-
 export const addToCartAction: ActionFunction = async (prevState, formData) => {
   return { message: "TODO: add to cart action" }
 }
+
+async function fetchProduct() {}
+
+export const fetchOrCreateCart = async () => {}
+
+async function updateOrCreateCartItem() {}
+
+export const updateCart = async () => {}
 
 export const removeCartItemAction = async () => {}
 
