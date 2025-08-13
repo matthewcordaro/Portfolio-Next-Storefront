@@ -22,3 +22,13 @@ export type CartState = {
   tax: number
   orderTotal: number
 }
+
+export type UserProductReview = {
+  id: string
+  rating: number
+  comment: string
+  product: {
+    image: string
+    name: string
+  }
+}
