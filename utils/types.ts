@@ -1,7 +1,9 @@
-export type actionFunction = (
+export type Message = { message: string }
+
+export type ActionFunction = (
   prevState: any,
   formData: FormData
-) => Promise<{ message: string }>
+) => Promise<Message>
 
 export type CartItem = {
   productId: string

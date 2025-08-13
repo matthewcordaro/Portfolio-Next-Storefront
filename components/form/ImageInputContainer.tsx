@@ -5,12 +5,12 @@ import { Button } from "../ui/button"
 import FormContainer from "./FormContainer"
 import ImageInput from "./ImageInput"
 import { SubmitButton } from "./Buttons"
-import { type actionFunction } from "@/utils/types"
+import { type ActionFunction } from "@/utils/types"
 
 type ImageInputContainerProps = {
   image: string
   name: string
-  action: actionFunction
+  action: ActionFunction
   text: string
   children?: React.ReactNode
 }

@@ -2,7 +2,7 @@
 
 import { useFormState } from "react-dom"
 import { useEffect } from "react"
-import { actionFunction } from "@/utils/types"
+import { ActionFunction } from "@/utils/types"
 import { useToast } from "@/hooks/use-toast"
 
 const initialState = {
@@ -13,7 +13,7 @@ function FormContainer({
   action,
   children,
 }: {
-  action: actionFunction
+  action: ActionFunction
   children: React.ReactNode
 }) {
   const [state, formAction] = useFormState(action, initialState)
