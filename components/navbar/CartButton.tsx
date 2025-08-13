@@ -1,9 +1,10 @@
 import { BsCart2 } from "react-icons/bs"
 import Link from "next/link"
 import { Button } from "../ui/button"
+import { fetchCartItems } from "@/utils/actions"
 
-function CartButton() {
-  const numItemsInCart = "99" // TODO: Make dynamic
+async function CartButton() {
+  const numItemsInCart = await fetchCartItems()
   return (
     <Button
       size='icon'
