@@ -14,6 +14,7 @@ datasource db {
   directUrl         = env("SUPABASE_DIRECT_URL")
 }
 
+/// Represents a product available in the store, including its details such as name, description, price, and related attributes.
 model Product {
   id                String      @id @default(uuid())
   name              String
@@ -30,6 +31,8 @@ model Product {
   cartItems         CartItem[]
 }
 
+/// The `Favorite` model represents a user's favorite item or entity within the application.
+/// It is used to store references to items that users have marked as favorites for quick access or personalization.
 model Favorite {
   id                String      @id @default(uuid())
   clerkId           String
@@ -39,6 +42,8 @@ model Favorite {
   updatedAt         DateTime    @updatedAt
 }
 
+/// Represents a review left by a user for a product or service.
+/// Contains details such as rating, comment, and references to related entities.
 model Review{
   id                String      @id @default(uuid())
   clerkId           String
@@ -52,6 +57,9 @@ model Review{
   productId         String
 }
 
+/// Represents a shopping cart containing products selected by a user.
+/// Each cart is associated with a user and can hold multiple items.
+/// Used to manage products before checkout.
 model Cart {
   id                String      @id @default(uuid())
   clerkId           String
@@ -66,6 +74,7 @@ model Cart {
   updatedAt         DateTime    @updatedAt
 }
 
+/// Represents an item added to a user's shopping cart, including product details and quantity.
 model CartItem {
   id                String      @id @default(uuid())
   product           Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
