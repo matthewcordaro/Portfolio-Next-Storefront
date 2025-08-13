@@ -561,7 +561,12 @@ const updateOrCreateCartItem = async () => {}
 
 export const updateCart = async () => {}
 
-export const addToCartAction = async () => {}
+export const addToCartAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  return { message: "TODO: add to cart action" }
+}
 
 export const removeCartItemAction = async () => {}
 
