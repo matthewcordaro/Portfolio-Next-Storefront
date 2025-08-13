@@ -50,6 +50,7 @@ function LinksDropdown() {
               if (link.label === "dashboard" && !isAdmin) return null
               return (
                 <DropdownMenuItem
+                  asChild
                   key={link.href}
                   className='flex w-full text-right justify-end'
                 >
