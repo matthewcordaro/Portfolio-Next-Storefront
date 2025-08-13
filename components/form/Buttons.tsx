@@ -137,3 +137,20 @@ export const CardSubmitButton = ({ isFav }: { isFav: boolean }) => {
     </Button>
   )
 }
+
+
+/**
+ * Renders a button that prompts the user to sign in.
+ * When clicked, it opens a sign-in modal dialog.
+ *
+ * @returns A React element containing a sign-in button wrapped in a modal trigger.
+ */
+export const ProductSignInButton = () => {
+  return (
+    <SignInButton mode='modal'>
+      <Button type='button' size='default' className='mt-8'>
+        Please Sign In
+      </Button>
+    </SignInButton>
+  )
+}
