@@ -486,7 +486,6 @@ export const fetchProductReviewsByUser = async () => {
   return reviews
 }
 
-
 /**
  * Deletes a review from the database based on the provided review ID and the authenticated user's ID.
  *
@@ -516,4 +515,18 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
   }
 }
 
-export const findExistingReview = async () => {}
+/**
+ * Finds an existing review for a given user and product.
+ *
+ * @param userId - The unique identifier of the user (clerkId).
+ * @param productId - The unique identifier of the product.
+ * @returns A promise that resolves to the first matching review, or `null` if none is found.
+ */
+export const findExistingReview = async (userId: string, productId: string) => {
+  return db.review.findFirst({
+    where: {
+      clerkId: userId,
+      productId,
+    },
+  })
+}
