@@ -541,14 +541,14 @@ export const findExistingReview = async (userId: string, productId: string) => {
  * @returns {Promise<number>} The number of items in the user's cart, or 0 if no cart exists.
  */
 export const fetchCartItems = async () => {
-  const {userId} = auth()
+  const { userId } = auth()
   const cart = await db.cart.findFirst({
-    where:{
-      clerkId: userId ?? ""
+    where: {
+      clerkId: userId ?? "",
     },
-    select:{
-      numItemsInCart:true
-    }
+    select: {
+      numItemsInCart: true,
+    },
   })
   return cart?.numItemsInCart || 0
 }
