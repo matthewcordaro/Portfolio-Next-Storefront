@@ -15,6 +15,15 @@ type SubmitButtonProps = {
   size?: bsnSize
 }
 
+/**
+ * Renders a submit button for forms, displaying a loading spinner when the form is pending.
+ *
+ * @param className - Additional CSS classes to apply to the button.
+ * @param text - The text to display on the button when not pending. Defaults to "submit".
+ * @param size - The size of the button. Defaults to "lg".
+ *
+ * @returns A styled submit button that is disabled and shows a spinner when the form is pending.
+ */
 export function SubmitButton({
   className = "",
   text = "submit",
@@ -41,6 +50,15 @@ export function SubmitButton({
 
 type actionType = "edit" | "delete"
 
+/**
+ * Renders an icon button for form actions such as "edit" or "delete".
+ * Displays a loading spinner when the form is pending submission.
+ *
+ * @param actionType - The type of action the button represents ("edit" or "delete").
+ * @returns A button element with the corresponding icon or a loading spinner.
+ *
+ * @throws Error if an invalid `actionType` is provided.
+ */
 export function IconButton({ actionType }: { actionType: actionType }) {
   const { pending } = useFormStatus()
 
@@ -68,6 +86,12 @@ export function IconButton({ actionType }: { actionType: actionType }) {
   )
 }
 
+/**
+ * Renders a button wrapped in a `SignInButton` component that triggers a sign-in modal.
+ * The button displays a heart icon and is styled as an outlined icon button.
+ *
+ * @returns A React element containing the sign-in button with a heart icon.
+ */
 export function CardSignInButton() {
   return (
     <SignInButton mode='modal'>
@@ -84,6 +108,16 @@ export function CardSignInButton() {
   )
 }
 
+/**
+ * Renders a submit button for a card form, displaying different icons based on the form status and favorite state.
+ *
+ * - Shows a spinning reload icon when the form is pending submission.
+ * - Shows a filled heart icon if the item is marked as favorite (`isFav` is `true`).
+ * - Shows an outlined heart icon if the item is not marked as favorite (`isFav` is `false`).
+ *
+ * @param isFav - Indicates whether the item is marked as favorite.
+ * @returns A React element representing the submit button.
+ */
 export const CardSubmitButton = ({ isFav }: { isFav: boolean }) => {
   const { pending } = useFormStatus()
   return (
