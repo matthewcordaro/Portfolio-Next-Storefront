@@ -135,12 +135,12 @@ export const fetchSingleProduct = async (
  * and saving the product to the database. Redirects to the products admin page upon success.
  * Returns an error message if any step fails.
  *
- * @param prevState - The previous state, typically used for state management in actions.
+ * @param _prevState - The previous state (unused).
  * @param formData - The form data containing product details and an image file.
  * @returns A promise that resolves to an object containing a message string.
  */
 export const createProductAction: ActionFunction = async (
-  prevState,
+  _prevState,
   formData
 ) => {
   const user = await getAuthUser()
@@ -227,12 +227,12 @@ export const fetchAdminProduct = async (
 /**
  * Updates a product in the database from form data.
  *
- * @param prevState - Previous state (unused).
- * @param formData - FormData with updated product fields.
+ * @param _prevState - The previous state (unused).
+ * @param formData - The form data with updated product fields.
  * @returns Success message or error.
  */
 export const updateProductAction: ActionFunction = async (
-  prevState,
+  _prevState,
   formData
 ) => {
   await getAdminUser()
@@ -255,8 +255,8 @@ export const updateProductAction: ActionFunction = async (
  * Updates the image of a product by uploading a new image, deleting the old image,
  * and updating the product record in the database. Requires admin privileges.
  *
- * @param prevState - The previous state, typically used for state management (not used in this function).
- * @param formData - A FormData object containing:
+ * @param _prevState - The previous state (unused).
+ * @param formData - The form data containing:
  *   - "image": The new image file to upload.
  *   - "id": The ID of the product to update.
  *   - "url": The URL of the old image to delete.
@@ -264,7 +264,7 @@ export const updateProductAction: ActionFunction = async (
  *          or an error message if an error occurs.
  */
 export const updateProductImageAction: ActionFunction = async (
-  prevState,
+  _prevState,
   formData
 ) => {
   await getAdminUser()
@@ -390,8 +390,8 @@ export const fetchUserFavorites = async (): Promise<Favorite[]> => {
  * The authenticated user's ID is attached to the review. After successful creation,
  * the relevant product page is revalidated. Returns a success message or an error response.
  *
- * @param _prevState - The previous state, not used in this function.
- * @param formData - The FormData object containing review data from the client.
+ * @param _prevState - The previous state (unused).
+ * @param formData - The form data containing review data from the client.
  * @returns An object with a success message or an error rendered by `renderError`.
  */
 export const createReviewAction: ActionFunction = async (
