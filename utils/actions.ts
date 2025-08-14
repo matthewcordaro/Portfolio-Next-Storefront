@@ -13,6 +13,7 @@ import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
 import { Product, Cart, Favorite, Review, CartItem } from "@prisma/client"
 import { Message, UserProductReview, ActionFunction } from "./types"
+import pluralize from "pluralize-esm"
 
 /**
  * Retrieves the currently authenticated user.
@@ -575,17 +576,141 @@ export const fetchCartItems = async (): Promise<number> => {
   return cart?.numItemsInCart || 0
 }
 
-export const addToCartAction: ActionFunction = async (prevState, formData) => {
-  return { message: "TODO: add to cart action" }
+/// Specifies the inclusion of related `product` data within `cartItems` when querying.
+const includeProductClause = { cartItems: { include: { product: true } } }
+
+/**
+ * Fetches the cart for a given user by their `userId`. If no cart exists and `errorIfNone` is `false`,
+ * creates a new cart for the user. If `errorIfNone` is `true` and no cart is found, throws an error.
+ *
+ * @param {string} userId - The unique identifier for the user.
+ * @param {boolean} [errorIfNone=false] - Whether to throw an error if no cart is found.
+ * @returns {Promise<Cart>} A promise that resolves to the user's cart.
+ * @throws {Error} If no cart is found and `errorIfNone` is `true`.
+ */
+export const fetchOrCreateCart = async (
+  userId: string,
+  errorIfNone: boolean = false
+): Promise<Cart> => {
+  let cart = await db.cart.findFirst({
+    where: { clerkId: userId },
+    include: includeProductClause,
+  })
+  if (!cart && errorIfNone)
+    throw new Error(`Cart not found for userId: ${userId}`)
+  if (!cart) {
+    cart = await db.cart.create({
+      data: { clerkId: userId },
+      include: includeProductClause,
+    })
+  }
+  return cart
 }
 
-async function fetchProduct() {}
+/**
+ * Updates the amount of an existing cart item or creates a new cart item if it does not exist.
+ *
+ * If a cart item with the specified `productId` and `cartId` exists, its `amount` is incremented by the provided `amount`.
+ * Otherwise, a new cart item is created with the given `productId`, `cartId`, and `amount`.
+ *
+ * @param {string} productId - The unique identifier of the product to add or update in the cart.
+ * @param {string} cartId - The unique identifier of the cart.
+ * @param {number} amount - The quantity to add to the cart item.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ */
+async function updateOrCreateCartItem(
+  productId: string,
+  cartId: string,
+  amount: number
+): Promise<void> {
+  const cartItem = await db.cartItem.findFirst({ where: { productId, cartId } })
+  if (cartItem) {
+    await db.cartItem.update({
+      where: { id: cartItem.id },
+      data: { amount: cartItem.amount + amount }, // TODO: Is this a bug?
+    })
+  } else {
+    await db.cartItem.create({ data: { amount, productId, cartId } })
+  }
+}
 
-export const fetchOrCreateCart = async () => {}
+/**
+ * Updates the cart summary fields based on its current items.
+ *
+ * This function recalculates the number of items, subtotal, tax, shipping, and order total
+ * for the given cart. It fetches all cart items, computes the totals, and updates the cart
+ * record in the database accordingly.
+ *
+ * @param {Cart} cart - The cart object to update, containing its ID, tax rate, and shipping cost.
+ * @returns {Promise<void>} A promise that resolves when the cart has been updated in the database.
+ */
+export const updateCart = async (cart: Cart): Promise<void> => {
+  const cartItems = await db.cartItem.findMany({
+    where: { cartId: cart.id },
+    include: { product: true },
+  })
 
-async function updateOrCreateCartItem() {}
+  let numItemsInCart = 0
+  let cartTotal = 0
 
-export const updateCart = async () => {}
+  for (const item of cartItems) {
+    numItemsInCart += item.amount
+    cartTotal += item.amount * item.product.price
+  }
+
+  const tax = cart.taxRate * cartTotal
+  const shipping = cartTotal ? cart.shipping : 0
+  const orderTotal = cartTotal + tax + shipping
+
+  await db.cart.update({
+    where: { id: cart.id },
+    data: { numItemsInCart, cartTotal, tax, orderTotal },
+  })
+}
+
+/**
+ * Handles the action of adding a product to the user's cart.
+ *
+ * This function retrieves the authenticated user's ID, fetches the product and the user's cart,
+ * updates or creates the cart item with the specified amount, and updates the cart accordingly.
+ * Returns a success message indicating the number of products added, or an error message if the operation fails.
+ *
+ * @param _prevState - The previous state (unused in this action).
+ * @param formData - The form data containing "productId" and "amount".
+ * @returns An object containing a success message, or the result of `renderError` if an error occurs.
+ */
+export const addToCartAction: ActionFunction = async (_prevState, formData) => {
+  const userId = (await getAuthUser()).id
+  try {
+    const productId = formData.get("productId") as string
+    const amount = Number(formData.get("amount"))
+    const product = await fetchProduct(productId)
+    const cart: Cart = await fetchOrCreateCart(userId)
+    await updateOrCreateCartItem(productId, cart.id, amount)
+    await updateCart(cart)
+
+    return {
+      message: `${amount} ${pluralize(product.name, amount)} ${
+        amount > 1 ? "have" : "has"
+      } been added to your cart`,
+    }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+/**
+ * Fetches a product from the database by its unique identifier.
+ *
+ * @param productId - The unique identifier of the product to fetch.
+ * @returns A promise that resolves to the product object if found.
+ * @throws {Error} If the product with the given ID is not found.
+ */
+async function fetchProduct(productId: string) {
+  const product = await db.product.findUnique({ where: { id: productId } })
+  if (!product) throw new Error(`Product ID ${productId}, not found`)
+  return product
+}
 
 export const removeCartItemAction = async () => {}
 
