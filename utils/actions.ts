@@ -753,11 +753,43 @@ export const removeCartItemAction: ActionFunction = async (
   }
 }
 
-export const updateCartItemAction: ActionFunction = async (
-  _prevState,
-  formData
-) => {
-  return { message: "TODO: make updateCartItemAction function" }
+/**
+ * Updates the amount of a specific cart item for the authenticated user.
+ *
+ * This function fetches or creates the user's cart, updates the specified cart item's amount,
+ * updates the cart, and revalidates the cart page. Returns a success message or an error.
+ *
+ * @param params - An object containing:
+ *   @param amount - The new quantity for the cart item.
+ *   @param cartItemId - The unique identifier of the cart item to update.
+ * @returns An object with a success message, or an error rendered by `renderError`.
+ */
+export const updateCartItemAction = async ({
+  amount,
+  cartItemId,
+}: {
+  amount: number
+  cartItemId: string
+}) => {
+  const user = await getAuthUser()
+
+  try {
+    const cart = await fetchOrCreateCart(user.id, true)
+    await db.cartItem.update({
+      where: {
+        id: cartItemId,
+        cartId: cart.id,
+      },
+      data: {
+        amount,
+      },
+    })
+    await updateCart(cart)
+    revalidatePath("/cart")
+    return { message: "cart updated" }
+  } catch (error) {
+    return renderError(error)
+  }
 }
 
 export const createOrderAction: ActionFunction = async (
