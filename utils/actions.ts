@@ -11,9 +11,17 @@ import {
 import { deleteImage, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
-import { Product, Cart, Favorite, Review, CartItem, Prisma } from "@prisma/client"
+import {
+  Product,
+  Cart,
+  Favorite,
+  Review,
+  CartItem,
+  Prisma,
+} from "@prisma/client"
 import { Message, UserProductReview, ActionFunction } from "./types"
 import pluralize from "pluralize-esm"
+import { Action } from "@prisma/client/runtime/library"
 
 /**
  * Retrieves the currently authenticated user.
@@ -712,6 +720,23 @@ async function fetchProduct(productId: string) {
   return product
 }
 
-export const removeCartItemAction = async () => {}
+export const removeCartItemAction: ActionFunction = async (
+  _prevState,
+  formData
+) => {
+  return { message: "TODO: make removeCartItemAction function" }
+}
 
-export const updateCartItemAction = async () => {}
+export const updateCartItemAction: ActionFunction = async (
+  _prevState,
+  formData
+) => {
+  return { message: "TODO: make updateCartItemAction function" }
+}
+
+export const createOrderAction: ActionFunction = async (
+  _prevState,
+  formData
+) => {
+  return { message: "TODO: make createOrderAction function" }
+}
