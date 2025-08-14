@@ -719,11 +719,38 @@ async function fetchProduct(productId: string) {
   return product
 }
 
+/**
+ * Removes an item from the user's cart.
+ *
+ * This action function retrieves the authenticated user, fetches or creates their cart,
+ * deletes the specified cart item, updates the cart, and revalidates the cart page.
+ * Returns a success message if the item is removed, or an error message if the operation fails.
+ *
+ * @param _prevState - The previous state (unused).
+ * @param formData - The form data containing the cart item ID to remove.
+ * @returns An object with a success message, or an error message if removal fails.
+ */
 export const removeCartItemAction: ActionFunction = async (
   _prevState,
   formData
 ) => {
-  return { message: "TODO: make removeCartItemAction function" }
+  const user = await getAuthUser()
+  try {
+    const cartItemId = formData.get("id") as string
+    const cart = await fetchOrCreateCart(user.id, true)
+    await db.cartItem.delete({
+      where: {
+        id: cartItemId,
+        cartId: cart.id,
+      },
+    })
+
+    await updateCart(cart)
+    revalidatePath("/cart")
+    return { message: "Item removed from cart" }
+  } catch (error) {
+    return renderError(error)
+  }
 }
 
 export const updateCartItemAction: ActionFunction = async (
