@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client"
+
 export type Message = { message: string }
 
 export type ActionFunction = (
@@ -32,3 +34,11 @@ export type UserProductReview = {
     name: string
   }
 }
+
+export type CartItemWithProduct = Prisma.CartItemGetPayload<{
+  include: { product: true }
+}>
+
+export type CartWithProducts = Prisma.CartGetPayload<{
+  include: { cartItems: { include: { product: true } } }
+}>
