@@ -19,9 +19,8 @@ import {
   CartItem,
   Prisma,
 } from "@prisma/client"
-import { Message, UserProductReview, ActionFunction } from "./types"
+import { Message, UserProductReview, ActionFunction, CartWithProducts } from "./types"
 import pluralize from "pluralize-esm"
-import { Action } from "@prisma/client/runtime/library"
 
 /**
  * Retrieves the currently authenticated user.
@@ -593,13 +592,13 @@ const includeProductClause = { cartItems: { include: { product: true } } }
  *
  * @param {string} userId - The unique identifier for the user.
  * @param {boolean} [errorIfNone=false] - Whether to throw an error if no cart is found.
- * @returns {Promise<Cart>} A promise that resolves to the user's cart.
+ * @returns {Promise<CartWithProducts>} A promise that resolves to the user's cart with products.
  * @throws {Error} If no cart is found and `errorIfNone` is `true`.
  */
 export const fetchOrCreateCart = async (
   userId: string,
   errorIfNone: boolean = false
-): Promise<Prisma.CartGetPayload<{ include: typeof includeProductClause }>> => {
+): Promise<CartWithProducts> => {
   let cart = await db.cart.findFirst({
     where: { clerkId: userId },
     include: includeProductClause,
