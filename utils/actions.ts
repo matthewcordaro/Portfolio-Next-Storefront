@@ -11,7 +11,7 @@ import {
 import { deleteImage, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
-import { Product, Cart, Favorite, Review, CartItem } from "@prisma/client"
+import { Product, Cart, Favorite, Review, CartItem, Prisma } from "@prisma/client"
 import { Message, UserProductReview, ActionFunction } from "./types"
 import pluralize from "pluralize-esm"
 
@@ -591,7 +591,7 @@ const includeProductClause = { cartItems: { include: { product: true } } }
 export const fetchOrCreateCart = async (
   userId: string,
   errorIfNone: boolean = false
-): Promise<Cart> => {
+): Promise<Prisma.CartGetPayload<{ include: typeof includeProductClause }>> => {
   let cart = await db.cart.findFirst({
     where: { clerkId: userId },
     include: includeProductClause,
