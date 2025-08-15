@@ -634,7 +634,7 @@ async function updateOrCreateCartItem(
   if (cartItem) {
     await db.cartItem.update({
       where: { id: cartItem.id },
-      data: { amount: cartItem.amount + amount }, // TODO: Is this a bug?
+      data: { amount: cartItem.amount + amount },
     })
   } else {
     await db.cartItem.create({ data: { amount, productId, cartId } })
