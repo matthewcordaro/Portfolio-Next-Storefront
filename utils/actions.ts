@@ -588,9 +588,6 @@ export const fetchCartItems = async (): Promise<number> => {
   return cart?.numItemsInCart || 0
 }
 
-/// Specifies the inclusion of related `product` data within `cartItems` when querying.
-const includeProductClause = { cartItems: { include: { product: true } } }
-
 /**
  * Fetches the cart for a given user by their `userId`. If no cart exists and `errorIfNone` is `false`,
  * creates a new cart for the user. If `errorIfNone` is `true` and no cart is found, throws an error.
@@ -606,14 +603,19 @@ export const fetchOrCreateCart = async (
 ): Promise<CartWithProducts> => {
   let cart = await db.cart.findFirst({
     where: { clerkId: userId },
-    include: includeProductClause,
+    include: {
+      cartItems: {
+        include: { product: true },
+        orderBy: { createdAt: "asc" },
+      },
+    },
   })
   if (!cart && errorIfNone)
     throw new Error(`Cart not found for userId: ${userId}`)
   if (!cart) {
     cart = await db.cart.create({
       data: { clerkId: userId },
-      include: includeProductClause,
+      include: { cartItems: { include: { product: true } } },
     })
   }
   return cart
