@@ -19,7 +19,12 @@ import {
   CartItem,
   Prisma,
 } from "@prisma/client"
-import { Message, UserProductReview, ActionFunction, CartWithProducts } from "./types"
+import {
+  Message,
+  UserProductReview,
+  ActionFunction,
+  CartWithProducts,
+} from "./types"
 import pluralize from "pluralize-esm"
 
 /**
