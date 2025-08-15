@@ -1,3 +1,5 @@
+"use client"
+
 import { Card } from "@/components/ui/card"
 import { ImageColumn, InfoColumn, CurrencyColumn } from "./CartItemColumns"
 import QuantityColumn from "./QuantityColumn"
