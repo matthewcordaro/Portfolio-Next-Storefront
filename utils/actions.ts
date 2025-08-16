@@ -575,7 +575,7 @@ export const findExistingReview = async (
  *
  * @returns {Promise<number>} The number of items in the user's cart, or 0 if no cart exists.
  */
-export const fetchCartItems = async (): Promise<number> => {
+export const fetchNumberOfCartItems = async (): Promise<number> => {
   const { userId } = auth()
   const cart = await db.cart.findFirst({
     where: {

@@ -1,10 +1,10 @@
 import { BsCart2 } from "react-icons/bs"
 import Link from "next/link"
 import { Button } from "../ui/button"
-import { fetchCartItems } from "@/utils/actions"
+import { fetchNumberOfCartItems } from "@/utils/actions"
 
 async function CartButton() {
-  const numItemsInCart = await fetchCartItems()
+  const numItemsInCart = await fetchNumberOfCartItems()
   return (
     <Button
       size='icon'
