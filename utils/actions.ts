@@ -680,6 +680,9 @@ export const updateCart = async (cart: Cart): Promise<void> => {
     where: { id: cart.id },
     data: { numItemsInCart, cartTotal, tax, orderTotal },
   })
+  // Revalidate the paths with cart info
+  revalidatePath("/cart")
+  revalidatePath("/")
 }
 
 /**
@@ -753,7 +756,6 @@ export const removeCartItemAction: ActionFunction = async (
     })
 
     await updateCart(cart)
-    revalidatePath("/cart")
     return { message: "Item removed from cart" }
   } catch (error) {
     return renderError(error)
@@ -792,7 +794,6 @@ export const updateCartItemAction = async ({
       },
     })
     await updateCart(cart)
-    revalidatePath("/cart")
     return { message: "cart updated" }
   } catch (error) {
     return renderError(error)
