@@ -1,4 +1,12 @@
-export const formatCurrency = (amount: number | null) => {
+/**
+ * Formats a given amount as a US Dollar currency string.
+ *
+ * If the provided amount is `null`, it defaults to `0`.
+ *
+ * @param amount - The numeric value to format as currency. If `null`, defaults to `0`.
+ * @returns The formatted currency string in USD (e.g., "$1,234.56").
+ */
+export function formatCurrency(amount: number | null): string {
   const value = amount || 0
   return new Intl.NumberFormat("en-US", {
     style: "currency",
