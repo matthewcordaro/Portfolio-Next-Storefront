@@ -15,16 +15,17 @@ export function formatCurrency(amount: number | null): string {
 }
 
 /**
- * Formats a given Date object into a human-readable string using the "en-US" locale.
- * The output includes the full year, the full month name, and the day of the month.
+ * Formats a given `Date` object into a human-readable string in the format "Month Day, Year" (e.g., "January 1, 2024").
+ * If no date is provided, the current date is used.
  *
- * @param date - The Date object to format.
- * @returns A formatted date string (e.g., "January 1, 2024").
+ * @param date - The `Date` object to format. If `undefined`, the current date is used.
+ * @returns A formatted date string in "Month Day, Year" format.
  */
-export function formatDate(date: Date): string {
+export function formatDate(date: Date | undefined): string {
+  const value = date || new Date()
   return new Intl.DateTimeFormat("en-US", {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date)
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(value)
 }
