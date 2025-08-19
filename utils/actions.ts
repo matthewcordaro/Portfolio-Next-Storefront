@@ -800,9 +800,59 @@ export const updateCartItemAction = async ({
   }
 }
 
-export const createOrderAction: ActionFunction = async (
-  _prevState,
-  formData
-) => {
-  return { message: "TODO: make createOrderAction function" }
+/**
+ * Creates a new order for the authenticated user.
+ *
+ * Executes a database transaction to:
+ *  - Create a new order with cart details and user email.
+ *  - Create ordered items for each cart item.
+ *  - Delete the user's cart after order creation.
+ *
+ * On success, this function will redirect to the orders page and never return a value.
+ * On error, it returns a message object describing the error.
+ *
+ * @returns {Promise<Message|never>} A promise that either redirects (never returns) on success,
+ * or resolves to an error message object.
+ */
+export const createOrderAction = async (): Promise<Message|never> => {
+  const user = await getAuthUser()
+  try {
+    const cart = await fetchOrCreateCart(user.id, true)
+
+    // Check for user email before creating the order
+    if (!user.emailAddresses?.length)
+      throw new Error("User does not have an email address.")
+
+    await db.$transaction(async (tx) => {
+      // Create the order
+      const order = await tx.order.create({
+        data: {
+          clerkId: user.id,
+          numItems: cart.numItemsInCart,
+          orderTotal: cart.orderTotal,
+          tax: cart.tax,
+          shipping: cart.shipping,
+          email: user.emailAddresses[0].emailAddress,
+        },
+      })
+      // Create all the ordered items associated with the order
+      await Promise.all(
+        cart.cartItems.map((cartItem) =>
+          tx.orderedItem.create({
+            data: {
+              orderId: order.id,
+              productId: cartItem.productId,
+              amount: cartItem.amount,
+              price: cartItem.product.price,
+            },
+          })
+        )
+      )
+      // Delete the associated cart
+      await tx.cart.delete({ where: { id: cart.id } })
+    })
+  } catch (error) {
+    return renderError(error)
+  }
+  redirect("/orders")
 }
