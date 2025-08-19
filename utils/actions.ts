@@ -829,6 +829,7 @@ export const createOrderAction = async (): Promise<Message | never> => {
           clerkId: user.id,
           numItems: cart.numItemsInCart,
           orderTotal: cart.orderTotal,
+          subTotal: cart.cartTotal,
           tax: cart.tax,
           shipping: cart.shipping,
           email: user.emailAddresses[0].emailAddress,
