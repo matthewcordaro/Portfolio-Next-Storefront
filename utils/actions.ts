@@ -16,8 +16,7 @@ import {
   Cart,
   Favorite,
   Review,
-  CartItem,
-  Prisma,
+  Order,
 } from "@prisma/client"
 import {
   Message,
@@ -814,7 +813,7 @@ export const updateCartItemAction = async ({
  * @returns {Promise<Message|never>} A promise that either redirects (never returns) on success,
  * or resolves to an error message object.
  */
-export const createOrderAction = async (): Promise<Message|never> => {
+export const createOrderAction = async (): Promise<Message | never> => {
   const user = await getAuthUser()
   try {
     const cart = await fetchOrCreateCart(user.id, true)
@@ -855,4 +854,43 @@ export const createOrderAction = async (): Promise<Message|never> => {
     return renderError(error)
   }
   redirect("/orders")
+}
+
+/**
+ * Fetches all paid orders for the currently authenticated user.
+ *
+ * Retrieves the authenticated user's ID and queries the database for orders
+ * associated with that user (`clerkId`) that have been marked as paid (`isPaid: true`).
+ * The results are ordered by creation date in descending order.
+ *
+ * @returns {Promise<Order[]>} A promise that resolves to an array of the user's paid orders.
+ */
+export const fetchUserOrders = async (): Promise<Order[]> => {
+  const user = await getAuthUser()
+  const orders = await db.order.findMany({
+    where: {
+      clerkId: user.id,
+      isPaid: true,
+    },
+    orderBy: { createdAt: "desc" },
+  })
+  return orders
+}
+
+/**
+ * Fetches all paid orders for the admin user, ordered by creation date in descending order.
+ *
+ * This function first verifies the admin user by calling `getAdminUser()`.
+ * It then retrieves all orders from the database where `isPaid` is `true`,
+ * sorted by the `createdAt` timestamp in descending order.
+ *
+ * @returns {Promise<Order[]>} A promise that resolves to an array of paid orders.
+ */
+export const fetchAdminOrders = async (): Promise<Order[]> => {
+  await getAdminUser()
+  const orders = await db.order.findMany({
+    where: { isPaid: true },
+    orderBy: { createdAt: "desc" },
+  })
+  return orders
 }
