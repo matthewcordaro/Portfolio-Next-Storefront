@@ -79,3 +79,31 @@ model CartItem {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 }
+
+/// Represents an item that has been ordered as part of a purchase transaction.
+/// Contains details about the product, quantity, and association with an order.
+model OrderedItem {
+  id                String          @id @default(uuid())
+  productId         String
+  amount            Int
+  price             Int
+  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId           String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+/// Represents a customer's order, containing details such as purchased items, order status, and associated user information.
+model Order {
+  id                String          @id @default(uuid())
+  clerkId           String
+  numItems          Int             @default(0)
+  orderTotal        Int             @default(0)
+  tax               Int             @default(0)
+  shipping          Int             @default(0)
+  email             String
+  isPaid            Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  orderedItems      OrderedItem[]
+}
