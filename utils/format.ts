@@ -11,6 +11,7 @@ export function formatCurrency(amount: number | null): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
+    currencySign: "accounting",
   }).format(value)
 }
 
