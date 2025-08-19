@@ -99,6 +99,7 @@ model Order {
   clerkId           String
   numItems          Int             @default(0)
   orderTotal        Int             @default(0)
+  subTotal          Int             @default(0)
   tax               Int             @default(0)
   shipping          Int             @default(0)
   email             String
