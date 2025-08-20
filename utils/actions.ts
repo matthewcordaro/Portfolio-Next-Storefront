@@ -812,12 +812,12 @@ export const createOrderAction = async (): Promise<Message | never> => {
   let order: Order
   let cart: CartWithProducts
   try {
-    // Fetch the cart; error if not found
-    cart = await fetchOrCreateCart(user.id, true)
-
     // Check for user email before creating the order
     if (!user.emailAddresses?.length)
       throw new Error("User does not have an email address.")
+
+    // Fetch the cart; error if not found
+    cart = await fetchOrCreateCart(user.id, true)
 
     order = await db.$transaction(async (tx) => {
       // Create the order
