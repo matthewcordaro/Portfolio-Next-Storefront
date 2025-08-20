@@ -62,3 +62,16 @@ export type CartItemWithProduct = Prisma.CartItemGetPayload<{
 export type CartWithProducts = Prisma.CartGetPayload<{
   include: { cartItems: { include: { product: true } } }
 }>
+
+/**
+ * Represents an order including its associated ordered items.
+ *
+ * This type is derived from Prisma's `OrderGetPayload` and includes:
+ * - All order properties.
+ * - An array of ordered items related to the order.
+ *
+ * Useful for scenarios where you need to access both order and item details in a single query result.
+ */
+export type OrderWithItems = Prisma.OrderGetPayload<{
+  include: { orderedItems: true }
+}>
