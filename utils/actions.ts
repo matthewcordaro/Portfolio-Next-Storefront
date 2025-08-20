@@ -888,7 +888,6 @@ export const fetchUserOrders = async (): Promise<Order[]> => {
 export const fetchAdminOrders = async (): Promise<Order[]> => {
   await getAdminUser()
   const orders = await db.order.findMany({
-    where: { isPaid: true },
     orderBy: { createdAt: "desc" },
   })
   return orders
