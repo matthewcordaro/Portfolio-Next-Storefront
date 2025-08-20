@@ -11,13 +11,7 @@ import {
 import { deleteImage, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
-import {
-  Product,
-  Cart,
-  Favorite,
-  Review,
-  Order,
-} from "@prisma/client"
+import { Product, Cart, Favorite, Review, Order } from "@prisma/client"
 import {
   Message,
   UserProductReview,
@@ -822,9 +816,9 @@ export const createOrderAction = async (): Promise<Message | never> => {
     if (!user.emailAddresses?.length)
       throw new Error("User does not have an email address.")
 
-    await db.$transaction(async (tx) => {
+    const order: Order = await db.$transaction(async (tx) => {
       // Create the order
-      const order = await tx.order.create({
+      const orderTransaction = await tx.order.create({
         data: {
           clerkId: user.id,
           numItems: cart.numItemsInCart,
@@ -840,7 +834,7 @@ export const createOrderAction = async (): Promise<Message | never> => {
         cart.cartItems.map((cartItem) =>
           tx.orderedItem.create({
             data: {
-              orderId: order.id,
+              orderId: orderTransaction.id,
               productId: cartItem.productId,
               amount: cartItem.amount,
               price: cartItem.product.price,
@@ -850,11 +844,12 @@ export const createOrderAction = async (): Promise<Message | never> => {
       )
       // Delete the associated cart
       await tx.cart.delete({ where: { id: cart.id } })
+      return orderTransaction
     })
+    redirect(`/checkout?orderId=${order.id}&cartId=${cart.id}`)
   } catch (error) {
     return renderError(error)
   }
-  redirect("/orders")
 }
 
 /**
