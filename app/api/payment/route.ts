@@ -3,6 +3,18 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 import { type NextRequest } from "next/server"
 import db from "@/utils/db"
 
+/**
+ * Handles the POST request to initiate a Stripe Checkout session for payment.
+ *
+ * This endpoint expects a JSON body containing `orderId` and `cartId`.
+ * It fetches the corresponding order and cart from the database, constructs
+ * Stripe line items from the cart contents, and creates an embedded Stripe
+ * Checkout session. The client secret for the session is returned in the response.
+ *
+ * @param req - The incoming Next.js request object containing the order and cart IDs.
+ * @returns A JSON response with the Stripe Checkout session client secret,
+ *          or an error response if the order or cart is not found, or if an internal error occurs.
+ */
 export const POST = async (req: NextRequest) => {
   // Parse the JSON body to get orderId and cartId
   const { orderId, cartId } = await req.json()
