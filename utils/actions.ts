@@ -599,7 +599,7 @@ export const fetchOrCreateCart = async (
     include: {
       cartItems: {
         include: { product: true },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: "desc" },
       },
     },
   })
