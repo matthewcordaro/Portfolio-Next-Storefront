@@ -819,6 +819,7 @@ export const createOrderAction = async (): Promise<Message | never> => {
     // Fetch the cart; error if not found
     cart = await fetchOrCreateCart(user.id, true)
 
+    // Transact a new order
     order = await db.$transaction(async (tx) => {
       // Create the order
       const orderTransaction = await tx.order.create({
