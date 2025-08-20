@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 import SectionTitle from "@/components/global/SectionTitle"
 import { fetchUserOrders } from "@/utils/actions"
-import { formatCurrency, formatDate } from "@/utils/format"
+import { formatCurrency, formatDate, formatTime } from "@/utils/format"
 
 async function OrdersPage() {
   const orders = await fetchUserOrders()
@@ -22,6 +22,7 @@ async function OrdersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
+              <TableHead>Time</TableHead>
               <TableHead># Items</TableHead>
               <TableHead>Subtotal</TableHead>
               <TableHead>Tax</TableHead>
@@ -39,11 +40,11 @@ async function OrdersPage() {
                 tax,
                 shipping,
                 createdAt,
-                isPaid,
               }) => {
                 return (
                   <TableRow key={id}>
                     <TableCell>{formatDate(createdAt)}</TableCell>
+                    <TableCell>{formatTime(createdAt)}</TableCell>
                     <TableCell>{numItems}</TableCell>
                     <TableCell>{formatCurrency(subTotal)}</TableCell>
                     <TableCell>{formatCurrency(tax)}</TableCell>
