@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 
 import { fetchAdminOrders } from "@/utils/actions"
-import { formatCurrency, formatDate } from "@/utils/format"
+import { formatCurrency, formatDate, formatTime } from "@/utils/format"
 
 async function SalesPage() {
   const orders = await fetchAdminOrders()
@@ -18,28 +18,42 @@ async function SalesPage() {
       <Table>
         <TableCaption>Total Orders: {orders.length}</TableCaption>
         <TableHeader>
-          <TableHead>Email</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead># Items</TableHead>
-          <TableHead>Subtotal</TableHead>
-          <TableHead>Tax</TableHead>
-          <TableHead>Shipping</TableHead>
-          <TableHead>Paid</TableHead>
-          <TableHead>Total</TableHead>
+          <TableRow>
+            <TableHead>Email</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Time</TableHead>
+            <TableHead># Items</TableHead>
+            <TableHead>Subtotal</TableHead>
+            <TableHead>Tax</TableHead>
+            <TableHead>Shipping</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead>Paid</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody>
           {orders.map(
-            ({ id, numItems, orderTotal, tax, shipping, createdAt, email, subTotal, isPaid }) => {
+            ({
+              id,
+              numItems,
+              orderTotal,
+              tax,
+              shipping,
+              createdAt,
+              email,
+              subTotal,
+              isPaid,
+            }) => {
               return (
                 <TableRow key={id}>
                   <TableCell>{email}</TableCell>
                   <TableCell>{formatDate(createdAt)}</TableCell>
+                  <TableCell>{formatTime(createdAt)}</TableCell>
                   <TableCell>{numItems}</TableCell>
                   <TableCell>{formatCurrency(subTotal)}</TableCell>
                   <TableCell>{formatCurrency(tax)}</TableCell>
                   <TableCell>{formatCurrency(shipping)}</TableCell>
-                  <TableCell>{isPaid ? "Y" : "N"}</TableCell>
                   <TableCell>{formatCurrency(orderTotal)}</TableCell>
+                  <TableCell>{isPaid ? "Y" : "N"}</TableCell>
                 </TableRow>
               )
             }
