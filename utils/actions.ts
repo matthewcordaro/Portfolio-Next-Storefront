@@ -801,7 +801,7 @@ export const updateCartItemAction = async ({
  *  - Create ordered items for each cart item.
  *  - Delete the user's cart after order creation.
  *
- * On success, this function will redirect to the orders page and never return a value.
+ * On success, this function will redirect to the checkout page and never return a value.
  * On error, it returns a message object describing the error.
  *
  * @returns {Promise<Message|never>} A promise that either redirects (never returns) on success,
@@ -809,14 +809,17 @@ export const updateCartItemAction = async ({
  */
 export const createOrderAction = async (): Promise<Message | never> => {
   const user = await getAuthUser()
+  let order: Order
+  let cart: CartWithProducts
   try {
-    const cart = await fetchOrCreateCart(user.id, true)
+    // Fetch the cart; error if not found
+    cart = await fetchOrCreateCart(user.id, true)
 
     // Check for user email before creating the order
     if (!user.emailAddresses?.length)
       throw new Error("User does not have an email address.")
 
-    const order: Order = await db.$transaction(async (tx) => {
+    order = await db.$transaction(async (tx) => {
       // Create the order
       const orderTransaction = await tx.order.create({
         data: {
@@ -846,10 +849,10 @@ export const createOrderAction = async (): Promise<Message | never> => {
       await tx.cart.delete({ where: { id: cart.id } })
       return orderTransaction
     })
-    redirect(`/checkout?orderId=${order.id}&cartId=${cart.id}`)
   } catch (error) {
     return renderError(error)
   }
+  redirect(`/checkout?orderId=${order.id}&cartId=${cart.id}`)
 }
 
 /**
