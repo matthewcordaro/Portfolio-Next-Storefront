@@ -30,3 +30,18 @@ export function formatDate(date: Date | undefined): string {
     day: "numeric",
   }).format(value)
 }
+
+/**
+ * Formats a given `Date` object into a short time string using the "en-US" locale.
+ *
+ * If no date is provided, the current time is used.
+ *
+ * @param date - The `Date` object to format. If `undefined`, the current time is used.
+ * @returns A string representing the formatted time (e.g., "3:45 PM").
+ */
+export function formatTime(date: Date | undefined): string {
+  const value = date || new Date()
+  return new Intl.DateTimeFormat("en-US", {
+    timeStyle: "short",
+  }).format(value)
+}
