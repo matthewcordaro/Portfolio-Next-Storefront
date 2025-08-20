@@ -26,7 +26,6 @@ async function OrdersPage() {
               <TableHead>Subtotal</TableHead>
               <TableHead>Tax</TableHead>
               <TableHead>Shipping</TableHead>
-              <TableHead>Paid</TableHead>
               <TableHead>Total</TableHead>
             </TableRow>
           </TableHeader>
@@ -49,7 +48,6 @@ async function OrdersPage() {
                     <TableCell>{formatCurrency(subTotal)}</TableCell>
                     <TableCell>{formatCurrency(tax)}</TableCell>
                     <TableCell>{formatCurrency(shipping)}</TableCell>
-                    <TableCell>{isPaid ? "Y" : "N"}</TableCell>
                     <TableCell>{formatCurrency(orderTotal)}</TableCell>
                   </TableRow>
                 )
