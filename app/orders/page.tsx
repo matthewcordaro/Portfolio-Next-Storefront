@@ -27,7 +27,7 @@ async function OrdersPage() {
               <TableHead>Tax</TableHead>
               <TableHead>Shipping</TableHead>
               <TableHead>Paid</TableHead>
-              <TableHead>Order Total</TableHead>
+              <TableHead>Total</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
