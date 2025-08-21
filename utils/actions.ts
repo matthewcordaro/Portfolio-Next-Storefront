@@ -17,6 +17,7 @@ import {
   UserProductReview,
   ActionFunction,
   CartWithProducts,
+  FavoriteWithProduct,
 } from "./types"
 import pluralize from "pluralize-esm"
 
@@ -375,7 +376,7 @@ export const toggleFavoriteAction = async (prevState: {
  *
  * @returns A promise that resolves to an array of favorite entries, each including the associated product.
  */
-export const fetchUserFavorites = async (): Promise<Favorite[]> => {
+export const fetchUserFavorites = async (): Promise<FavoriteWithProduct[]> => {
   const user = await getAuthUser()
   const favorites = db.favorite.findMany({
     where: {
