@@ -1,6 +1,8 @@
 "use client"
 import { useEffect } from "react"
 
+const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30
+
 /**
  * A React component that detects the user's current timezone using the browser's `Intl.DateTimeFormat` API.
  *
