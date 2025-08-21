@@ -55,7 +55,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
-      metadata: { orderId: order.id },
+      metadata: { orderId, cartId },
       line_items: lineItems,
       mode: "payment",
       return_url: `${origin}/api/confirm?session_id={CHECKOUT_SESSION_ID}`,
