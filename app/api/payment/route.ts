@@ -56,6 +56,15 @@ export const POST = async (req: NextRequest) => {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       metadata: { orderId, cartId },
+      customer_email: "example@check.out",
+      custom_text: {
+        submit: {
+          message:
+            "Card: 4242424242424242; Exp: 0150; CVC, Name, Zip: Whatever",
+        },
+      },
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minutes from now
+      payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       return_url: `${origin}/api/confirm?session_id={CHECKOUT_SESSION_ID}`,
