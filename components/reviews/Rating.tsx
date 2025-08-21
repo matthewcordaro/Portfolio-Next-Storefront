@@ -10,7 +10,7 @@ function Rating({ rating }: { rating: number }) {
   })
 
   return (
-    <div className="flex items-center gap-x-1">
+    <div className='flex items-center gap-x-1'>
       {stars.map((type, i) => {
         const className = `w-3 h-3 ${
           type === "full" || type === "half" ? "text-primary" : "text-gray-400"

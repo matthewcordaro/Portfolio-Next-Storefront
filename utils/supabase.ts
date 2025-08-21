@@ -2,7 +2,6 @@ import { createClient } from "@supabase/supabase-js"
 
 const bucket = "product-images"
 
-
 /**
  * An instance of the Supabase client, configured with the project's URL and API key
  * from environment variables. Use this client to interact with your Supabase backend
@@ -32,7 +31,6 @@ export const uploadImage = async (image: File) => {
   if (!data) throw new Error("Image upload failed")
   return supabase.storage.from(bucket).getPublicUrl(newName).data.publicUrl
 }
-
 
 /**
  * Deletes an image from the Supabase storage bucket based on its URL.

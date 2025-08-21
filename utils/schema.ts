@@ -79,9 +79,12 @@ function validateImageFile() {
   const acceptedFileTypes = ["image/"]
   return z
     .instanceof(File)
-    .refine((file) => {
-      return !file || file.size <= maxUploadSize
-    }, "File size must be less than " + maxUploadSizeInMB + "MB")
+    .refine(
+      (file) => {
+        return !file || file.size <= maxUploadSize
+      },
+      "File size must be less than " + maxUploadSizeInMB + "MB"
+    )
     .refine((file) => {
       return (
         !file || acceptedFileTypes.some((type) => file.type.startsWith(type))
@@ -102,9 +105,7 @@ function validateImageFile() {
 export const reviewSchema = z.object({
   productId: z.string().min(1, { message: "Product ID cannot be empty" }),
   authorName: z.string().min(1, { message: "Author name cannot be empty" }),
-  authorImageUrl: z
-    .string()
-    .url({ message: "Must be a valid url" }),
+  authorImageUrl: z.string().url({ message: "Must be a valid url" }),
   rating: z.coerce
     .number()
     .int()

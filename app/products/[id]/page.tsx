@@ -10,13 +10,13 @@ import ProductReviews from "@/components/reviews/ProductReviews"
 import { fetchSingleProduct, findExistingReview } from "@/utils/actions"
 import { auth } from "@clerk/nextjs/server"
 
-
 async function SingleProductPage({ params }: { params: { id: string } }) {
   const product = await fetchSingleProduct(params.id)
   const { name, image, company, description } = product
   const dollarAmount = formatCurrency(product.price)
-  const {userId} = auth()
-  const reviewDoesNotExist = userId && !(await findExistingReview(userId, product.id))
+  const { userId } = auth()
+  const reviewDoesNotExist =
+    userId && !(await findExistingReview(userId, product.id))
   return (
     <section>
       <BreadCrumbs name={name} />

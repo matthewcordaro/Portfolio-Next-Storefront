@@ -32,12 +32,12 @@ function RatingInput({
               <SelectItem key={star} value={star}>
                 {star}
               </SelectItem>
-            );
+            )
           })}
         </SelectContent>
       </Select>
     </div>
-  );
-};
+  )
+}
 
 export default RatingInput
