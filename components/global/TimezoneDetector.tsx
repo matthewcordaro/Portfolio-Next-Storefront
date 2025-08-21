@@ -31,7 +31,14 @@ export default function TimezoneDetector() {
     // If the cookie exists but is outdated, update it silently (no reload)
     else if (currentCookie !== timezone) {
       document.cookie = `timezone=${timezone}; path=/; max-age=${
-        60 * 60 * 24 * 30
+        THIRTY_DAYS_IN_SECONDS
+      }` // 30 days
+      window.location.reload()
+    }
+    // If the cookie exists but is outdated, update it silently (no reload)
+    else if (currentCookie !== timezone) {
+      document.cookie = `timezone=${timezone}; path=/; max-age=${
+        THIRTY_DAYS_IN_SECONDS
       }` // 30 days
     }
   }, [])
