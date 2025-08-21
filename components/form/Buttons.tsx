@@ -138,7 +138,6 @@ export const CardSubmitButton = ({ isFav }: { isFav: boolean }) => {
   )
 }
 
-
 /**
  * Renders a button that prompts the user to sign in.
  * When clicked, it opens a sign-in modal dialog.
