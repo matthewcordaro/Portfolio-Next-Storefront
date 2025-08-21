@@ -32,11 +32,12 @@ export const GET = async (req: NextRequest) => {
         where: { id: orderId },
         data: { isPaid: true },
       })
+      // Delete the cart from the database
       await db.cart.delete({ where: { id: cartId } })
     }
   } catch (error) {
     console.log(error)
-    return Response.json(null, {
+    return Response.json("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
     })
