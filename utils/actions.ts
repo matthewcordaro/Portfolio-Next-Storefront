@@ -800,7 +800,6 @@ export const updateCartItemAction = async ({
  * Executes a database transaction to:
  *  - Create a new order with cart details and user email.
  *  - Create ordered items for each cart item.
- *  - Delete the user's cart after order creation.
  *
  * On success, this function will redirect to the checkout page and never return a value.
  * On error, it returns a message object describing the error.
@@ -820,37 +819,32 @@ export const createOrderAction = async (): Promise<Message | never> => {
     // Fetch the cart; error if not found
     cart = await fetchOrCreateCart(user.id, true)
 
-    // Transact a new order
-    order = await db.$transaction(async (tx) => {
-      // Create the order
-      const orderTransaction = await tx.order.create({
-        data: {
-          clerkId: user.id,
-          numItems: cart.numItemsInCart,
-          orderTotal: cart.orderTotal,
-          subTotal: cart.cartTotal,
-          tax: cart.tax,
-          shipping: cart.shipping,
-          email: user.emailAddresses[0].emailAddress,
-        },
-      })
-      // Create all the ordered items associated with the order
-      await Promise.all(
-        cart.cartItems.map((cartItem) =>
-          tx.orderedItem.create({
-            data: {
-              orderId: orderTransaction.id,
-              productId: cartItem.productId,
-              amount: cartItem.amount,
-              price: cartItem.product.price,
-            },
-          })
-        )
-      )
-      // Delete the associated cart
-      await tx.cart.delete({ where: { id: cart.id } })
-      return orderTransaction
+    // Create the order
+    order = await db.order.create({
+      data: {
+        clerkId: user.id,
+        numItems: cart.numItemsInCart,
+        orderTotal: cart.orderTotal,
+        subTotal: cart.cartTotal,
+        tax: cart.tax,
+        shipping: cart.shipping,
+        email: user.emailAddresses[0].emailAddress,
+      },
     })
+
+    // Create all the ordered items associated with the order
+    await Promise.all(
+      cart.cartItems.map((cartItem) =>
+        db.orderedItem.create({
+          data: {
+            orderId: order.id,
+            productId: cartItem.productId,
+            amount: cartItem.amount,
+            price: cartItem.product.price,
+          },
+        })
+      )
+    )
   } catch (error) {
     return renderError(error)
   }
