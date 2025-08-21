@@ -895,7 +895,6 @@ export const fetchAdminOrders = async (): Promise<Order[]> => {
   return orders
 }
 
-
 /**
  * Deletes all unpaid orders older than 1 month.
  *
@@ -904,7 +903,7 @@ export const fetchAdminOrders = async (): Promise<Order[]> => {
  *
  * @returns {Promise<Message>} An object with a success message or error.
  */
-export const deleteOldUnpaidOrders:ActionFunction = async () => {
+export const deleteOldUnpaidOrders: ActionFunction = async () => {
   await getAdminUser()
   try {
     const oneMonthAgo = new Date()
@@ -912,8 +911,8 @@ export const deleteOldUnpaidOrders:ActionFunction = async () => {
 
     const deleted = await db.order.deleteMany({
       where: {
-      isPaid: false,
-      updatedAt: { lt: oneMonthAgo },
+        isPaid: false,
+        updatedAt: { lt: oneMonthAgo },
       },
     })
 
