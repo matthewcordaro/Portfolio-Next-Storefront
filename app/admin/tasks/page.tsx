@@ -9,7 +9,7 @@ function TasksPage() {
       <SectionTitle text='Cleanup Tasks' size='xl' />
       <FormContainer action={deleteOldUnpaidOrders}>
         <SubmitButton
-          text='Delete Unpaid Orders Older Than 1 Month'
+          text='Delete Unpaid Orders Older Than 30 Minutes'
           className='w-4/12 mt-8 bg-destructive'
         />
       </FormContainer>

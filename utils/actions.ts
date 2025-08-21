@@ -890,23 +890,22 @@ export const fetchAdminOrders = async (): Promise<Order[]> => {
 }
 
 /**
- * Deletes all unpaid orders older than 1 month.
+ * Deletes all unpaid orders older than 30 minutes.
  *
  * This action requires admin privileges. It finds all orders where isPaid is false
- * and updatedAt is older than 1 month, then deletes them. Returns a message with the count of deleted orders.
+ * and updatedAt is older than 30 minutes, then deletes them. Returns a message with the count of deleted orders.
  *
  * @returns {Promise<Message>} An object with a success message or error.
  */
 export const deleteOldUnpaidOrders: ActionFunction = async () => {
   await getAdminUser()
   try {
-    const oneMonthAgo = new Date()
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
 
     const deleted = await db.order.deleteMany({
       where: {
         isPaid: false,
-        updatedAt: { lt: oneMonthAgo },
+        updatedAt: { lt: thirtyMinutesAgo },
       },
     })
 
