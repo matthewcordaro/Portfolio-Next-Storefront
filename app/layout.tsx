@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar/Navbar"
 import Container from "@/components/global/Container"
 import Providers from "./providers"
 import { ClerkProvider } from "@clerk/nextjs"
+import TimezoneDetector from "@/components/global/TimezoneDetector"
 
 const font = Varela_Round({ subsets: ["latin"], weight: "400" })
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: ReadonlyChildrenReactNode) {
       <html {...htmlElementAttributes}>
         <body className={font.className}>
           <Providers>
+            <TimezoneDetector />
             <Navbar />
             <Container className='py-20'>{children}</Container>
           </Providers>

@@ -11,9 +11,12 @@ import {
 import SectionTitle from "@/components/global/SectionTitle"
 import { fetchUserOrders } from "@/utils/actions"
 import { formatCurrency, formatDate, formatTime } from "@/utils/format"
+import { cookies } from "next/headers"
 
 async function OrdersPage() {
   const orders = await fetchUserOrders()
+  const timezone = cookies().get("timezone")?.value || "UTC"
+
   return (
     <>
       <SectionTitle text='Your Orders' />
@@ -44,8 +47,8 @@ async function OrdersPage() {
               }) => {
                 return (
                   <TableRow key={id}>
-                    <TableCell>{formatDate(createdAt)}</TableCell>
-                    <TableCell>{formatTime(createdAt)}</TableCell>
+                    <TableCell>{formatDate(createdAt, timezone)}</TableCell>
+                    <TableCell>{formatTime(createdAt, timezone)}</TableCell>
                     <TableCell>{numItems}</TableCell>
                     <TableCell>{formatCurrency(subTotal)}</TableCell>
                     <TableCell>{formatCurrency(tax)}</TableCell>
