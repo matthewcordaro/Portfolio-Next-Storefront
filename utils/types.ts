@@ -75,3 +75,13 @@ export type CartWithProducts = Prisma.CartGetPayload<{
 export type OrderWithItems = Prisma.OrderGetPayload<{
   include: { orderedItems: true }
 }>
+
+/**
+ * Represents a favorite including its associated product details.
+ *
+ * This type is derived from Prisma's `FavoriteGetPayload` with the `product` relation included.
+ * Useful for scenarios where both favorite and product information are required together.
+ */
+export type FavoriteWithProduct = Prisma.FavoriteGetPayload<{
+  include: { product: true }
+}>
