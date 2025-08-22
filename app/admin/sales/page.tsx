@@ -11,9 +11,12 @@ import {
 
 import { fetchAdminOrders } from "@/utils/actions"
 import { formatCurrency, formatDate, formatTime } from "@/utils/format"
+import { cookies } from "next/headers"
 
 async function SalesPage() {
   const orders = await fetchAdminOrders()
+  const timezone = cookies().get("timezone")?.value || "UTC"
+
   return (
     <div>
       <Table>
@@ -47,8 +50,8 @@ async function SalesPage() {
               return (
                 <TableRow key={id}>
                   <TableCell>{email}</TableCell>
-                  <TableCell>{formatDate(createdAt)}</TableCell>
-                  <TableCell>{formatTime(createdAt)}</TableCell>
+                  <TableCell>{formatDate(createdAt, timezone)}</TableCell>
+                  <TableCell>{formatTime(createdAt, timezone, true)}</TableCell>
                   <TableCell>{numItems}</TableCell>
                   <TableCell>{formatCurrency(subTotal)}</TableCell>
                   <TableCell>{formatCurrency(tax)}</TableCell>
