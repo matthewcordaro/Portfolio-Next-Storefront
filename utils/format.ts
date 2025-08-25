@@ -20,14 +20,19 @@ export function formatCurrency(amount: number | null): string {
  * If no date is provided, the current date is used.
  *
  * @param date - The `Date` object to format. If `undefined`, the current date is used.
+ * @param timeZone - An optional time zone identifier (e.g., "America/New_York"). Defaults to "UTC" (Universal Time).
  * @returns A formatted date string in "Month Day, Year" format.
  */
-export function formatDate(date: Date | undefined): string {
+export function formatDate(
+  date: Date | undefined,
+  timeZone: string = "UTC"
+): string {
   const value = date || new Date()
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: timeZone,
   }).format(value)
 }
 
@@ -37,11 +42,33 @@ export function formatDate(date: Date | undefined): string {
  * If no date is provided, the current time is used.
  *
  * @param date - The `Date` object to format. If `undefined`, the current time is used.
- * @returns A string representing the formatted time (e.g., "3:45 PM").
+ * @param timeZone - An optional time zone identifier (e.g., "America/New_York"). Defaults to "UTC" (Universal Time).
+ * @param showTimeZone - If `true`, appends the time zone abbreviation (e.g., "EST", "EDT") to the result.
+ *   The abbreviation will reflect daylight saving time if applicable for the date and zone.
+ * @returns A string representing the formatted time (e.g., "3:45 PM EDT").
  */
-export function formatTime(date: Date | undefined): string {
+export function formatTime(
+  date: Date | undefined,
+  timeZone: string = "UTC",
+  showTimeZone = false
+): string {
   const value = date || new Date()
-  return new Intl.DateTimeFormat("en-US", {
+  let timeString = new Intl.DateTimeFormat("en-US", {
     timeStyle: "short",
+    timeZone: timeZone,
   }).format(value)
+
+  // Get the time zone abbreviation
+  if (showTimeZone)
+    timeString +=
+      " " +
+      value
+        .toLocaleTimeString("en-US", {
+          timeZone: timeZone,
+          timeZoneName: "short",
+        })
+        .split(" ")
+        .pop()
+
+  return timeString
 }
