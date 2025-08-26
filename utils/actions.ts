@@ -11,7 +11,7 @@ import {
 import { deleteImage, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
-import { Product, Cart, Favorite, Review, Order } from "@prisma/client"
+import { Product, Cart, Review, Order } from "@prisma/client"
 import {
   Message,
   ProductReviewWithProduct,
@@ -531,7 +531,7 @@ export const deleteReviewAction = async (prevState: {
 /**
  * Updates a review in the database based on the provided review ID and the authenticated user's ID.
  *
- * @param prevState - An object containing the `productId`, `reviewId`, `rating`, and `comment` to update the review.
+ * @param newState - An object containing the `productId`, `reviewId`, `rating`, and `comment` to update the review.
  * @returns A promise that resolves to an object with a success message if the review is updated,
  *          or an error object if the operation fails.
  *
@@ -539,20 +539,24 @@ export const deleteReviewAction = async (prevState: {
  * - This function requires the user to be authenticated.
  * - After successful update, it triggers a revalidation of the "/reviews" path.
  */
-export const updateReviewAction = async (prevState: {
+export const updateReviewAction = async (newState: {
   productId: string
   reviewId: string
   rating: number
   comment: string
 }): Promise<Message> => {
-  const { productId, reviewId, rating, comment } = prevState
+  const { productId, reviewId, rating, comment } = newState
   const user = await getAuthUser()
+  const validation = reviewSchema.partial().safeParse({ ...newState })
   try {
+    if (!validation.success) {
+      console.log(validation.error)
+      throw new Error("Invalid input for review update.")
+    }
     await db.review.update({
       where: {
         id: reviewId,
         clerkId: user.id,
-        productId: productId,
       },
       data: {
         rating,
