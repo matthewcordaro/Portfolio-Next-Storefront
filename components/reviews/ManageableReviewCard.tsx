@@ -4,21 +4,24 @@ import UpdateReview from "./UpdateReview"
 import VerifyActionButton from "@/components/global/VerifyActionButton"
 import { BsTrash } from "react-icons/bs"
 import { deleteReviewAction } from "@/utils/actions"
+import { Review } from "@prisma/client"
+import { ProductReviewWithProduct } from "@/utils/types"
 
-interface ManageableReviewCardProps {
-  reviewInfo: {
-    comment: string
-    rating: number
-    name: string
-    image: string
-    id: string
-  }
-}
-
-function ManageableReviewCard({ reviewInfo }: ManageableReviewCardProps) {
-  const { id } = reviewInfo
+/**
+ * Renders a review card with management actions for a given review.
+ * Displays update and delete (with verification) controls for the review.
+ *
+ * @param review - The review object to display and manage. Can be of type `Review` or `ProductReviewWithProduct`.
+ * @returns A JSX element containing the review card and management actions.
+ */
+function ManageableReviewCard({
+  review,
+}: {
+  review: Review | ProductReviewWithProduct
+}) {
+  const id = review.id
   return (
-    <ReviewCard reviewInfo={reviewInfo}>
+    <ReviewCard review={review}>
       <div className='flex items-center gap-x-2'>
         <UpdateReview reviewId={id} />
         <VerifyActionButton
