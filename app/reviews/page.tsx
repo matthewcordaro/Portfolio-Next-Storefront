@@ -1,9 +1,9 @@
-import { fetchProductReviewsByUser } from "@/utils/actions"
+import { fetchProductReviewsAuthUser } from "@/utils/actions"
 import SectionTitle from "@/components/global/SectionTitle"
 import ManageableReviewCard from "@/components/reviews/ManageableReviewCard"
 
 async function ReviewsPage() {
-  const reviews = await fetchProductReviewsByUser()
+  const reviews = await fetchProductReviewsAuthUser()
   if (reviews.length === 0)
     return <SectionTitle text='you have no reviews yet' />
 
@@ -20,11 +20,9 @@ async function ReviewsPage() {
             rating,
             name,
             image,
-            id
+            id,
           }
-          return (
-            <ManageableReviewCard key={id} reviewInfo={reviewInfo} />
-          )
+          return <ManageableReviewCard key={id} reviewInfo={reviewInfo} />
         })}
       </section>
     </>

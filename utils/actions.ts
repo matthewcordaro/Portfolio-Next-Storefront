@@ -482,12 +482,9 @@ export const fetchProductRating = async (
  * for all reviews associated with the user's `clerkId`. Each review includes its `id`,
  * `rating`, `comment`, and the associated product's `image` and `name`.
  *
- * @returns {Promise<Array<{ id: string; rating: number; comment: string; product: { image: string; name: string } }>>}
- *   A promise that resolves to an array of review objects with selected fields.
- *
- * @throws {Error} If the user is not authenticated or if the database query fails.
+ * @returns {Promise<UserProductReview[]>} A promise that resolves to an array of user-authored product reviews.
  */
-export const fetchProductReviewsByUser = async (): Promise<
+export const fetchProductReviewsAuthUser = async (): Promise<
   UserProductReview[]
 > => {
   const user = await getAuthUser()
