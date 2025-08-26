@@ -2,6 +2,7 @@ import { fetchProductReviews } from "@/utils/actions"
 import ReviewCard from "./ReviewCard"
 import SectionTitle from "../global/SectionTitle"
 import DeleteReviewButton from "./DeleteReviewButton"
+import UpdateReview from "./UpdateReview"
 
 async function ProductReviews({
   productId,
@@ -27,7 +28,10 @@ async function ProductReviews({
             return (
               <ReviewCard key={id} reviewInfo={reviewInfo}>
                 {currentUserId && clerkId === currentUserId && (
-                  <DeleteReviewButton reviewId={id} />
+                  <div className='flex items-center gap-x-2'>
+                    <UpdateReview reviewId={id} />
+                    <DeleteReviewButton reviewId={id} />
+                  </div>
                 )}
               </ReviewCard>
             )
