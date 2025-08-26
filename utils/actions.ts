@@ -547,12 +547,9 @@ export const updateReviewAction = async (newState: {
 }): Promise<Message> => {
   const { productId, reviewId, rating, comment } = newState
   const user = await getAuthUser()
-  const validation = reviewSchema.partial().safeParse({ ...newState })
   try {
-    if (!validation.success) {
-      console.log(validation.error)
-      throw new Error("Invalid input for review update.")
-    }
+    // Use validateWithZodSchema for partial validation
+    validateWithZodSchema(reviewSchema, { rating, comment }, true)
     await db.review.update({
       where: {
         id: reviewId,
