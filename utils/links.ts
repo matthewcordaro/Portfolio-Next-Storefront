@@ -14,7 +14,7 @@ export const links: NavLink[] = [
   { href: "/admin/sales", label: "dashboard" },
 ]
 
-export const adminLinks: NavLink[] = [
+export const adminSidebarLinks: NavLink[] = [
   { href: "/admin/sales", label: "sales" },
   { href: "/admin/products", label: "products" },
   { href: "/admin/products/create", label: "create product" },
