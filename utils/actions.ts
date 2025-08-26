@@ -897,7 +897,7 @@ export const fetchAdminOrders = async (): Promise<Order[]> => {
  *
  * @returns {Promise<Message>} An object with a success message or error.
  */
-export const deleteOldUnpaidOrders: ActionFunction = async () => {
+export const deleteOldUnpaidOrders = async (): Promise<Message> => {
   await getAdminUser()
   try {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
