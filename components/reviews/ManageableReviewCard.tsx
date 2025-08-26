@@ -23,7 +23,7 @@ function ManageableReviewCard({
   return (
     <ReviewCard review={review}>
       <div className='flex items-center gap-x-2'>
-        <UpdateReview reviewId={id} />
+        <UpdateReview review={review} />
         <VerifyActionButton
           type='destructive'
           buttonIcon={() => (
