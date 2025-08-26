@@ -14,7 +14,7 @@ import { revalidatePath } from "next/cache"
 import { Product, Cart, Favorite, Review, Order } from "@prisma/client"
 import {
   Message,
-  UserProductReview,
+  ProductReviewWithProduct,
   ActionFunction,
   CartWithProducts,
   FavoriteWithProduct,
@@ -482,27 +482,17 @@ export const fetchProductRating = async (
  * for all reviews associated with the user's `clerkId`. Each review includes its `id`,
  * `rating`, `comment`, and the associated product's `image` and `name`.
  *
- * @returns {Promise<UserProductReview[]>} A promise that resolves to an array of user-authored product reviews.
+ * @returns {Promise<ProductReviewWithProduct[]>} A promise that resolves to an array of user-authored product reviews.
  */
-export const fetchProductReviewsAuthUser = async (): Promise<
-  UserProductReview[]
+export const fetchProductReviewsWithProductForAuthUser = async (): Promise<
+  ProductReviewWithProduct[]
 > => {
   const user = await getAuthUser()
   const reviews = await db.review.findMany({
     where: {
       clerkId: user.id,
     },
-    select: {
-      id: true,
-      rating: true,
-      comment: true,
-      product: {
-        select: {
-          image: true,
-          name: true,
-        },
-      },
-    },
+    include: { product: { select: { image: true, name: true } } },
   })
   return reviews
 }

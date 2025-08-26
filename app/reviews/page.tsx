@@ -1,9 +1,9 @@
-import { fetchProductReviewsAuthUser } from "@/utils/actions"
+import { fetchProductReviewsWithProductForAuthUser } from "@/utils/actions"
 import SectionTitle from "@/components/global/SectionTitle"
 import ManageableReviewCard from "@/components/reviews/ManageableReviewCard"
 
 async function ReviewsPage() {
-  const reviews = await fetchProductReviewsAuthUser()
+  const reviews = await fetchProductReviewsWithProductForAuthUser()
   if (reviews.length === 0)
     return <SectionTitle text='you have no reviews yet' />
 
