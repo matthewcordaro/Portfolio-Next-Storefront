@@ -26,7 +26,7 @@ export default function RootLayout({ children }: ReadonlyChildrenReactNode) {
   }
   return (
     <ClerkProvider>
-      <html {...htmlElementAttributes}>
+      <html {...htmlElementAttributes} className="scroll-smooth">
         <body className={font.className}>
           <Providers>
             <TimezoneDetector />

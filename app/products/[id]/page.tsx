@@ -9,6 +9,7 @@ import SubmitReview from "@/components/reviews/SubmitReview"
 import ProductReviews from "@/components/reviews/ProductReviews"
 import { fetchSingleProduct, findExistingReview } from "@/utils/actions"
 import { auth } from "@clerk/nextjs/server"
+import Link from "next/link"
 
 async function SingleProductPage({ params }: { params: { id: string } }) {
   const product = await fetchSingleProduct(params.id)
@@ -41,7 +42,9 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
               <ShareButton name={name} productId={product.id} />
             </div>
           </div>
-          <ProductRating productId={product.id} />
+          <Link href='#product-rating' className='no-underline'>
+            <ProductRating productId={product.id} />
+          </Link>
           <h4 className='text-xl mt-2'>{company}</h4>
           <p className='mt-3 text-md bg-muted inline-block p-2 rounded-md'>
             {dollarAmount}
@@ -50,6 +53,7 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
           <AddToCart productId={product.id} />
         </div>
       </div>
+      <div id='product-rating' />
       <ProductReviews
         productId={product.id}
         currentUserId={userId || undefined}
