@@ -1,18 +1,21 @@
-import { SubmitButton } from "@/components/form/Buttons"
-import FormContainer from "@/components/form/FormContainer"
-import SectionTitle from "@/components/global/SectionTitle"
+"use client"
 import { deleteOldUnpaidOrders } from "@/utils/actions"
+import VerifyActionButton from "@/components/global/VerifyActionButton"
+import SectionTitle from "@/components/global/SectionTitle"
 
 function TasksPage() {
   return (
     <div>
       <SectionTitle text='Cleanup Tasks' size='xl' />
-      <FormContainer action={deleteOldUnpaidOrders}>
-        <SubmitButton
-          text='Delete Unpaid Orders Older Than 30 Minutes'
-          className='w-4/12 mt-8 bg-destructive'
-        />
-      </FormContainer>
+      <VerifyActionButton
+        type='destructive'
+        buttonText='Delete Unpaid Orders Older Than 30 Minutes'
+        buttonClassName='mt-8'
+        dialogTitle='Confirm Deletion'
+        dialogDescription='This will delete all unpaid orders created more than 30 mins ago.'
+        dialogConfirmText='Delete'
+        verificationAction={deleteOldUnpaidOrders}
+      />
     </div>
   )
 }
