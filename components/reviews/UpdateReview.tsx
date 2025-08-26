@@ -16,6 +16,16 @@ import { Review } from "@prisma/client"
 
 function UpdateReview({ review }: { review: Review }) {
   const { id: reviewId, rating, comment, productId } = review
+
+  const handleUpdateReview = async (_prevState: any, formData: FormData) => {
+    return await updateReviewAction({
+      productId,
+      reviewId,
+      rating: Number(formData.get("rating")),
+      comment: formData.get("comment") as string,
+    })
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -27,10 +37,10 @@ function UpdateReview({ review }: { review: Review }) {
         <DialogHeader>
           <DialogTitle>Update your review</DialogTitle>
         </DialogHeader>
-        <FormContainer action={updateReviewAction}>
+        <FormContainer action={handleUpdateReview}>
           <input type='hidden' name='reviewId' value={reviewId} />
           <input type='hidden' name='productId' value={productId} />
-          <RatingInput name='rating' />
+          <RatingInput name='rating' defaultValue={rating} />
           <TextAreaInput
             name='comment'
             labelText='feedback'
