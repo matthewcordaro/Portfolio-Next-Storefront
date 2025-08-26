@@ -29,9 +29,10 @@ function UpdateReview({ review }: { review: Review }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span style={{ cursor: "pointer" }}>
+        <Button variant={"link"}
+        size={"icon"} className="p-2 cursor-pointer hover:bg-primary hover:text-primary-foreground">
           <BsPencilSquare />
-        </span>
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
