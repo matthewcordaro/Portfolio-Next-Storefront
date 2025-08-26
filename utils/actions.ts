@@ -542,6 +542,45 @@ export const deleteReviewAction = async (prevState: {
 }
 
 /**
+ * Updates a review in the database based on the provided review ID and the authenticated user's ID.
+ *
+ * @param prevState - An object containing the `productId`, `reviewId`, `rating`, and `comment` to update the review.
+ * @returns A promise that resolves to an object with a success message if the review is updated,
+ *          or an error object if the operation fails.
+ *
+ * @remarks
+ * - This function requires the user to be authenticated.
+ * - After successful update, it triggers a revalidation of the "/reviews" path.
+ */
+export const updateReviewAction = async (prevState: {
+  productId: string
+  reviewId: string
+  rating: number
+  comment: string
+}): Promise<Message> => {
+  const { productId, reviewId, rating, comment } = prevState
+  const user = await getAuthUser()
+  try {
+    await db.review.update({
+      where: {
+        id: reviewId,
+        clerkId: user.id,
+        productId: productId,
+      },
+      data: {
+        rating,
+        comment,
+      },
+    })
+    revalidatePath("/reviews")
+    revalidatePath(`/products/${productId}`)
+    return { message: "Review updated successfully" }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+/**
  * Finds an existing review for a given user and product.
  *
  * @param userId - The unique identifier of the user (clerkId).
