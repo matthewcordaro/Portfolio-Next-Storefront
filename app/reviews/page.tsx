@@ -1,8 +1,6 @@
 import { fetchProductReviewsByUser } from "@/utils/actions"
-import ReviewCard from "@/components/reviews/ReviewCard"
 import SectionTitle from "@/components/global/SectionTitle"
-import DeleteReviewButton from "@/components/reviews/DeleteReviewButton"
-import UpdateReview from "@/components/reviews/UpdateReview"
+import ManageableReviewCard from "@/components/reviews/ManageableReviewCard"
 
 async function ReviewsPage() {
   const reviews = await fetchProductReviewsByUser()
@@ -15,20 +13,17 @@ async function ReviewsPage() {
       <section className='grid md:grid-cols-2 gap-8 mt-4 '>
         {reviews.map((review) => {
           const { comment, rating, id } = review
+          // Use product name and image for review display
           const { name, image } = review.product
           const reviewInfo = {
             comment,
             rating,
             name,
-            image
+            image,
+            id
           }
           return (
-            <ReviewCard key={id} reviewInfo={reviewInfo}>
-              <div className='flex items-center gap-x-2'>
-                <UpdateReview reviewId={id} />
-                <DeleteReviewButton reviewId={id} />
-              </div>
-            </ReviewCard>
+            <ManageableReviewCard key={id} reviewInfo={reviewInfo} />
           )
         })}
       </section>
