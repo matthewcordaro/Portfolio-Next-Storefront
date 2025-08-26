@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client"
+import { Prisma, Review } from "@prisma/client"
 
 /**
  * Represents a simple message object containing a single string property.
@@ -21,19 +21,12 @@ export type ActionFunction = (
 ) => Promise<Message>
 
 /**
- * Represents a review submitted by a user for a product.
+ * Represents a review for a product, extending the base `Review` type.
+ * Includes additional product information such as image and name.
  *
- * @property id - Unique identifier for the review.
- * @property rating - Numerical rating given by the user.
- * @property comment - Textual feedback provided by the user.
- * @property product - Information about the reviewed product.
- * @property product.image - URL or path to the product's image.
- * @property product.name - Name of the product being reviewed.
+ * @property product - An object containing the product's image URL and name.
  */
-export type UserProductReview = {
-  id: string
-  rating: number
-  comment: string
+export type ProductReviewWithProduct = Review & {
   product: {
     image: string
     name: string

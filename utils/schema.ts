@@ -36,16 +36,28 @@ export const productSchema = z.object({
  * @template T - The type inferred from the Zod schema.
  * @param schema - The Zod schema to validate against.
  * @param data - The data to be validated.
+ * @param partial - If true, validates only the provided fields (partial validation).
  * @returns The validated data, typed as T.
  * @throws {Error} If validation fails, throws an error containing all validation messages.
  */
 export function validateWithZodSchema<T>(
   schema: ZodSchema<T>,
-  data: unknown
+  data: unknown,
+  partial: boolean = false
 ): T {
-  const result = schema.safeParse(data)
+  const schemaToUse =
+    partial && "partial" in schema ? (schema as any).partial() : schema
+  const result = schemaToUse.safeParse(data)
   if (!result.success) {
-    const errors = result.error.errors.map((error) => error.message)
+    interface ZodErrorDetail {
+      message: string
+      path: (string | number)[]
+      code: string
+    }
+
+    const errors: string[] = result.error.errors.map(
+      (error: ZodErrorDetail) => error.message
+    )
     throw new Error(errors.join(", "))
   }
   return result.data
@@ -79,12 +91,9 @@ function validateImageFile() {
   const acceptedFileTypes = ["image/"]
   return z
     .instanceof(File)
-    .refine(
-      (file) => {
-        return !file || file.size <= maxUploadSize
-      },
-      "File size must be less than " + maxUploadSizeInMB + "MB"
-    )
+    .refine((file) => {
+      return !file || file.size <= maxUploadSize
+    }, "File size must be less than " + maxUploadSizeInMB + "MB")
     .refine((file) => {
       return (
         !file || acceptedFileTypes.some((type) => file.type.startsWith(type))

@@ -11,10 +11,10 @@ import {
 import { deleteImage, uploadImage } from "./supabase"
 import { getAdminUserIds } from "./env"
 import { revalidatePath } from "next/cache"
-import { Product, Cart, Favorite, Review, Order } from "@prisma/client"
+import { Product, Cart, Review, Order } from "@prisma/client"
 import {
   Message,
-  UserProductReview,
+  ProductReviewWithProduct,
   ActionFunction,
   CartWithProducts,
   FavoriteWithProduct,
@@ -482,30 +482,17 @@ export const fetchProductRating = async (
  * for all reviews associated with the user's `clerkId`. Each review includes its `id`,
  * `rating`, `comment`, and the associated product's `image` and `name`.
  *
- * @returns {Promise<Array<{ id: string; rating: number; comment: string; product: { image: string; name: string } }>>}
- *   A promise that resolves to an array of review objects with selected fields.
- *
- * @throws {Error} If the user is not authenticated or if the database query fails.
+ * @returns {Promise<ProductReviewWithProduct[]>} A promise that resolves to an array of user-authored product reviews.
  */
-export const fetchProductReviewsByUser = async (): Promise<
-  UserProductReview[]
+export const fetchProductReviewsWithProductForAuthUser = async (): Promise<
+  ProductReviewWithProduct[]
 > => {
   const user = await getAuthUser()
   const reviews = await db.review.findMany({
     where: {
       clerkId: user.id,
     },
-    select: {
-      id: true,
-      rating: true,
-      comment: true,
-      product: {
-        select: {
-          image: true,
-          name: true,
-        },
-      },
-    },
+    include: { product: { select: { image: true, name: true } } },
   })
   return reviews
 }
@@ -536,6 +523,46 @@ export const deleteReviewAction = async (prevState: {
     })
     revalidatePath("/reviews")
     return { message: "Review deleted successfully" }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+/**
+ * Updates a review in the database based on the provided review ID and the authenticated user's ID.
+ *
+ * @param newState - An object containing the `productId`, `reviewId`, `rating`, and `comment` to update the review.
+ * @returns A promise that resolves to an object with a success message if the review is updated,
+ *          or an error object if the operation fails.
+ *
+ * @remarks
+ * - This function requires the user to be authenticated.
+ * - After successful update, it triggers a revalidation of the "/reviews" path.
+ */
+export const updateReviewAction = async (newState: {
+  productId: string
+  reviewId: string
+  rating: number
+  comment: string
+}): Promise<Message> => {
+  const { productId, reviewId, rating, comment } = newState
+  const user = await getAuthUser()
+  try {
+    // Use validateWithZodSchema for partial validation
+    validateWithZodSchema(reviewSchema, { rating, comment }, true)
+    await db.review.update({
+      where: {
+        id: reviewId,
+        clerkId: user.id,
+      },
+      data: {
+        rating,
+        comment,
+      },
+    })
+    revalidatePath("/reviews")
+    revalidatePath(`/products/${productId}`)
+    return { message: "Review updated successfully" }
   } catch (error) {
     return renderError(error)
   }
