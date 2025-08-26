@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { Button } from "../ui/button"
-import { links } from "@/utils/links"
+import { adminLinks, guestLinks, userLinks, NavLink } from "@/utils/links"
 import UserIcon from "./UserIcon"
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
 import SignOutLink from "./SignOutLink"
@@ -23,6 +23,7 @@ import { getAdminUserIds } from "@/utils/env"
 function LinksDropdown() {
   const { userId } = auth()
   const isAdmin = userId !== null && getAdminUserIds().includes(userId)
+  const links = isAdmin ? adminLinks : userLinks
   return (
     <>
       <DropdownMenu>
@@ -34,32 +35,21 @@ function LinksDropdown() {
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-36' align='end' sideOffset={10}>
           <SignedOut>
+            <MenuLinks links={guestLinks} />
+            <DropdownMenuSeparator />
             <DropdownMenuItem>
               <SignInButton mode='modal'>
                 <button className='w-full text-left'>Login</button>
               </SignInButton>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <SignUpButton mode='modal'>
-              <button className='w-full text-left'>Register</button>
-            </SignUpButton>
+            <DropdownMenuItem>
+              <SignUpButton mode='modal'>
+                <button className='w-full text-left'>Register</button>
+              </SignUpButton>
+            </DropdownMenuItem>
           </SignedOut>
           <SignedIn>
-            {/* TODO: disable links for users not logged in */}
-            {links.map((link) => {
-              if (link.label === "dashboard" && !isAdmin) return null
-              return (
-                <DropdownMenuItem
-                  asChild
-                  key={link.href}
-                  className='flex w-full text-right justify-end'
-                >
-                  <Link href={link.href} className='capitalize w-full'>
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              )
-            })}
+            <MenuLinks links={links} />
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <SignOutLink />
@@ -71,3 +61,23 @@ function LinksDropdown() {
   )
 }
 export default LinksDropdown
+
+function MenuLinks({ links }: { links: NavLink[] }) {
+  return (
+    <>
+      {links.map((link) => {
+        return (
+          <DropdownMenuItem
+            asChild
+            key={link.href}
+            className='flex w-full text-right justify-end'
+          >
+            <Link href={link.href} className='capitalize w-full'>
+              {link.label}
+            </Link>
+          </DropdownMenuItem>
+        )
+      })}
+    </>
+  )
+}
