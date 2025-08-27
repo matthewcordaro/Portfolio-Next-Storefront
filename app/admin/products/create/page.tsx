@@ -7,11 +7,19 @@ import ImageInput from "@/components/form/ImageInput"
 import TextAreaInput from "@/components/form/TextAreaInput"
 import CheckBoxInput from "@/components/form/CheckBoxInput"
 import { SubmitButton } from "@/components/form/Buttons"
+import { nodeEnvironment } from "@/utils/env"
 
+type FakeString = string | undefined
+type FakeNumber = number | undefined
 function CreateProductPage() {
-  const name = faker.commerce.productName()
-  const company = faker.company.name()
-  const description = faker.lorem.paragraph({ min: 10, max: 12 })
+  let name: FakeString, company: FakeString, description: FakeString
+  let price: FakeNumber
+  if (nodeEnvironment !== "production") {
+    name = faker.commerce.productName()
+    company = faker.company.name()
+    description = faker.lorem.paragraph({ min: 10, max: 12 })
+    price = 100
+  }
   return (
     <section>
       <h1 className='text-2xl font-semibold mb-8 capitalize'>create product</h1>
@@ -30,7 +38,7 @@ function CreateProductPage() {
               label='company'
               defaultValue={company}
             />
-            <PriceInput />
+            <PriceInput defaultValue={price} />
             <ImageInput />
           </div>
           <TextAreaInput
