@@ -25,3 +25,7 @@ export function getAdminUserIds(): string[] {
     return []
   }
 }
+
+export const nodeEnvironment = process.env.NODE_ENV
+
+export const redirectAfterAddingToCart = process.env.REDIRECT_AFTER_ADDING_TO_CART || undefined
