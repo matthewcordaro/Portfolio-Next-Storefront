@@ -13,8 +13,8 @@ import Link from "next/link"
 
 async function SingleProductPage({ params }: { params: { id: string } }) {
   const product = await fetchSingleProduct(params.id)
-  const { name, image, company, description } = product
-  const dollarAmount = formatCurrency(product.price)
+  const { name, image, company, description, price } = product
+  const formattedPrice = formatCurrency(price)
   const { userId } = auth()
   const reviewDoesNotExist =
     userId && !(await findExistingReview(userId, product.id))
@@ -47,7 +47,7 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
           </Link>
           <h4 className='text-xl mt-2'>{company}</h4>
           <p className='mt-3 text-md bg-muted inline-block p-2 rounded-md'>
-            {dollarAmount}
+            {formattedPrice}
           </p>
           <p className='mt-6 leading-8 text-muted-foreground'>{description}</p>
           <AddToCart productId={product.id} />

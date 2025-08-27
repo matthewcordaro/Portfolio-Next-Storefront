@@ -9,7 +9,7 @@ function ProductsGrid({ products }: { products: Product[] }) {
   return (
     <div className='pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {products.map(({ name, price, image, id }) => {
-        const dollarsAmount = formatCurrency(price)
+        const formattedPrice = formatCurrency(price)
         return (
           <article key={id} className='group relative'>
             <Link href={`/products/${id}`}>
@@ -28,7 +28,7 @@ function ProductsGrid({ products }: { products: Product[] }) {
                   <div className='mt-4 text-center'>
                     <h2 className='text-lg  capitalize'>{name}</h2>
                     <p className='text-muted-foreground  mt-2'>
-                      {dollarsAmount}
+                      {formattedPrice}
                     </p>
                   </div>
                 </CardContent>

@@ -44,7 +44,7 @@ export const POST = async (req: NextRequest) => {
           name: cartItem.product.name,
           images: [cartItem.product.image],
         },
-        unit_amount: cartItem.product.price * 100, //in cents
+        unit_amount: cartItem.product.price, // Price in cents
       },
     }
   })

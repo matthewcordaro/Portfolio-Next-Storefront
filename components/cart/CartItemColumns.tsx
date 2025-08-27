@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/utils/format"
 import Image from "next/image"
 import Link from "next/link"
+
 export const ImageColumn = ({
   name,
   image,
