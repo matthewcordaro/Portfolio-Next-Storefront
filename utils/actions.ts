@@ -9,7 +9,7 @@ import {
   validateWithZodSchema,
 } from "./schema"
 import { deleteImage, uploadImage } from "./supabase"
-import { getAdminUserIds } from "./env"
+import { getAdminUserIds, redirectAfterAddingToCart } from "./env"
 import { revalidatePath } from "next/cache"
 import { Product, Cart, Review, Order } from "@prisma/client"
 import {
@@ -716,9 +716,11 @@ export const updateCart = async (cart: Cart): Promise<void> => {
  * @param _prevState - The previous state (unused in this action).
  * @param formData - The form data containing "productId" and "amount".
  * @returns An object containing a success message, or the result of `renderError` if an error occurs.
+ * @throws Redirects to defined location if `redirectAfterAddingToCart` defined in `env.ts`.
  */
 export const addToCartAction: ActionFunction = async (_prevState, formData) => {
   const userId = (await getAuthUser()).id
+  let message: string
   try {
     const productId = formData.get("productId") as string
     const amount = Number(formData.get("amount"))
@@ -727,14 +729,15 @@ export const addToCartAction: ActionFunction = async (_prevState, formData) => {
     await updateOrCreateCartItem(productId, cart.id, amount)
     await updateCart(cart)
 
-    return {
-      message: `${amount} ${pluralize(product.name, amount)} ${
-        amount > 1 ? "have" : "has"
-      } been added to your cart`,
-    }
+    message = `${amount} ${pluralize(product.name, amount)} ${
+      amount > 1 ? "have" : "has"
+    } been added to your cart`
   } catch (error) {
     return renderError(error)
   }
+  const redirectPath = redirectAfterAddingToCart
+  if (redirectPath) redirect(redirectPath)
+  return { message }
 }
 
 /**
