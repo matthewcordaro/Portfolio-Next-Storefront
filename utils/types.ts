@@ -1,5 +1,7 @@
 import { Prisma, Review } from "@prisma/client"
 
+export type NodeEnvironment = "test" | "development" | "production"
+
 /**
  * Represents a simple message object containing a single string property.
  *
