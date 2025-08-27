@@ -13,7 +13,6 @@ import { nodeEnvironment } from "@/utils/env"
 function SubmitReview({ productId }: { productId: string }) {
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false)
   const { user } = useUser()
-  console.log(nodeEnvironment)
   return (
     <div>
       <Button
