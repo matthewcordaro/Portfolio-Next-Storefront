@@ -35,19 +35,37 @@ export const POST = async (req: NextRequest) => {
     })
 
   // Create line items for each cart item
-  const lineItems = cart.cartItems.map((cartItem) => {
-    return {
-      quantity: cartItem.amount,
+  const lineItems = [
+    ...cart.cartItems.map((cartItem) => {
+      return {
+        quantity: cartItem.amount,
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: cartItem.product.name,
+            images: [cartItem.product.image],
+          },
+          unit_amount: cartItem.product.price, // Price in cents
+        },
+      }
+    }),
+    {
+      quantity: 1,
       price_data: {
         currency: "usd",
-        product_data: {
-          name: cartItem.product.name,
-          images: [cartItem.product.image],
-        },
-        unit_amount: cartItem.product.price, // Price in cents
+        product_data: { name: "Shipping" },
+        unit_amount: cart.shipping,
       },
-    }
-  })
+    },
+    {
+      quantity: 1,
+      price_data: {
+        currency: "usd",
+        product_data: { name: "Tax" },
+        unit_amount: cart.tax,
+      },
+    },
+  ]
 
   // Get the origin from the request headers
   const origin = req.headers.get("origin")
