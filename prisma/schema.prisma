@@ -60,9 +60,9 @@ model Cart {
   cartItems         CartItem[]
   numItemsInCart    Int         @default(0)
   cartTotal         Int         @default(0)
-  shipping          Int         @default(5)
+  shipping          Int         @default(500)
   tax               Int         @default(0)
-  taxRate           Float       @default(0.1)
+  taxRate           Float       @default(0.08625)
   orderTotal        Int         @default(0)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
