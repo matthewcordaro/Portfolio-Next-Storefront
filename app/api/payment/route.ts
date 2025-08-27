@@ -2,6 +2,7 @@ import Stripe from "stripe"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 import { type NextRequest } from "next/server"
 import db from "@/utils/db"
+import { nodeEnvironment } from "@/utils/env"
 
 /**
  * Handles the POST request to initiate a Stripe Checkout session for payment.
@@ -51,11 +52,9 @@ export const POST = async (req: NextRequest) => {
   // Get the origin from the request headers
   const origin = req.headers.get("origin")
 
-  // Try to create a Stripe Checkout session
-  try {
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: "embedded",
-      metadata: { orderId, cartId },
+  let fakeData={}
+  if (nodeEnvironment !== "production") {
+    fakeData = {
       customer_email: "example@check.out",
       custom_text: {
         submit: {
@@ -63,6 +62,15 @@ export const POST = async (req: NextRequest) => {
             "Card: 4242424242424242; Exp: 0150; CVC, Name, Zip: Whatever",
         },
       },
+    }
+  }
+
+  // Try to create a Stripe Checkout session
+  try {
+    const session = await stripe.checkout.sessions.create({
+      ...fakeData,
+      ui_mode: "embedded",
+      metadata: { orderId, cartId },
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minutes from now
       payment_method_types: ["card"],
       line_items: lineItems,
