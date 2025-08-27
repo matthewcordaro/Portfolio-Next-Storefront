@@ -1,3 +1,5 @@
+import { NodeEnvironment } from "./types"
+
 /**
  * Retrieves the list of admin user IDs from the environment variable `ADMIN_USER_IDS`.
  *
@@ -25,3 +27,20 @@ export function getAdminUserIds(): string[] {
     return []
   }
 }
+
+/**
+ * Represents the current environment as specified by the `NODE_ENV` environment variable.
+ * Allowed values are `'development'`, `'production'`, and `'test'`.
+ */
+export const nodeEnvironment: NodeEnvironment = process.env.NODE_ENV
+
+/**
+ * Specifies the URL or path to redirect to after an item is added to the cart.
+ * If the environment variable is not set, the value will be `undefined` and a toast will display.
+*
+ * The value is retrieved from the `REDIRECT_AFTER_ADDING_TO_CART` environment variable.
+ *
+ * @example  In your .env file define:
+ * REDIRECT_AFTER_ADDING_TO_CART="/cart"
+ */
+export const redirectAfterAddingToCart = process.env.REDIRECT_AFTER_ADDING_TO_CART || undefined

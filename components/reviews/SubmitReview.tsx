@@ -8,6 +8,7 @@ import TextAreaInput from "@/components/form/TextAreaInput"
 import { Button } from "@/components/ui/button"
 import { createReviewAction } from "@/utils/actions"
 import { useUser } from "@clerk/nextjs"
+import { nodeEnvironment } from "@/utils/env"
 
 function SubmitReview({ productId }: { productId: string }) {
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false)
@@ -39,7 +40,9 @@ function SubmitReview({ productId }: { productId: string }) {
             <TextAreaInput
               name='comment'
               labelText='feedback'
-              defaultValue='Outstanding product!!!'
+              defaultValue={
+                nodeEnvironment !== "production" ? "Outstanding product!!!" : ""
+              }
             />
             <SubmitButton className='mt-4' />
           </FormContainer>
