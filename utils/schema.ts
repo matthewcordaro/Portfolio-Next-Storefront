@@ -6,7 +6,7 @@ import { z, ZodSchema } from "zod"
  * Fields:
  * - `name`: Product name, must be a string with at least 3 characters.
  * - `company`: Company name, must be a string with at least 1 character.
- * - `price`: Product price, coerced to an integer number, must be positive (>= 0).
+ * - `price`: Product price, coerced to a number, must be positive (>= 0).
  * - `description`: Product description, must be a string containing between 10 and 1000 words.
  * - `featured`: Indicates if the product is featured, coerced to a boolean.
  *
@@ -19,7 +19,7 @@ export const productSchema = z.object({
   company: z
     .string()
     .min(1, { message: "company name must be at least 1 character" }),
-  price: z.coerce.number().int().min(0, { message: "price must be positive" }),
+  price: z.coerce.number().min(0, { message: "price must be positive" }),
   description: z.string().refine(
     (description) => {
       const wordCount = description.split(" ").length

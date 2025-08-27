@@ -13,11 +13,13 @@ import { BsLink45Deg } from "react-icons/bs"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import ImageInputContainer from "@/components/form/ImageInputContainer"
+import { integerCentsToCurrencyNumber } from "@/utils/format"
 
 async function EditProductPage({ params }: { params: { id: string } }) {
   const { id } = params
   const product = await fetchAdminProduct(id)
   const { name, company, description, featured, price } = product
+  const formattedPrice = integerCentsToCurrencyNumber(price)
   return (
     <section>
       <h1 className='text-2xl font-semibold mb-8 capitalize'>update product</h1>
@@ -46,7 +48,7 @@ async function EditProductPage({ params }: { params: { id: string } }) {
               label='company'
               defaultValue={company}
             />
-            <PriceInput defaultValue={price} />
+            <PriceInput defaultValue={formattedPrice} />
           </div>
           <TextAreaInput
             name='description'

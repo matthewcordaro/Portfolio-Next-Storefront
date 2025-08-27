@@ -18,7 +18,7 @@ function CreateProductPage() {
     name = faker.commerce.productName()
     company = faker.company.name()
     description = faker.lorem.paragraph({ min: 10, max: 12 })
-    price = 100
+    price = 19.99
   }
   return (
     <section>

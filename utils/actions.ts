@@ -20,6 +20,7 @@ import {
   FavoriteWithProduct,
 } from "./types"
 import pluralize from "pluralize-esm"
+import { currencyStringToIntegerCents } from "./format"
 
 /**
  * Retrieves the currently authenticated user.
@@ -153,8 +154,11 @@ export const createProductAction: ActionFunction = async (
   const user = await getAuthUser()
 
   try {
-    const data = Object.fromEntries(formData)
-    const validatedData = validateWithZodSchema(productSchema, data)
+    const rawData = Object.fromEntries(formData)
+    rawData.price = currencyStringToIntegerCents(
+      rawData.price.toString()
+    ).toString()
+    const validatedData = validateWithZodSchema(productSchema, rawData)
     const file = formData.get("image") as File
     const validatedImageFile = validateWithZodSchema(imageSchema, {
       image: file,
@@ -246,6 +250,9 @@ export const updateProductAction: ActionFunction = async (
   try {
     const productId = formData.get("id") as string
     const rawData = Object.fromEntries(formData)
+    rawData.price = currencyStringToIntegerCents(
+      rawData.price.toString()
+    ).toString()
     const validatedData = validateWithZodSchema(productSchema, rawData)
     await db.product.update({
       where: { id: productId },

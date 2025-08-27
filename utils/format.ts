@@ -3,16 +3,41 @@
  *
  * If the provided amount is `null`, it defaults to `0`.
  *
- * @param amount - The numeric value to format as currency. If `null`, defaults to `0`.
- * @returns The formatted currency string in USD (e.g., "$1,234.56").
+ * @param amountInCents - The numeric value to format as currency. If `null`, defaults to `0`.
+ * @returns The formatted currency string in USD (e.g., 123456 -> "$1,234.56").
  */
-export function formatCurrency(amount: number | null): string {
-  const value = amount || 0
+export function formatCurrency(amountInCents: number | null): string {
+  const value = (amountInCents ?? 0) / 100 // Convert cents to dollars
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     currencySign: "accounting",
   }).format(value)
+}
+
+/**
+ * Converts a currency string to its integer value in cents.
+ *
+ * This function removes any non-numeric characters (except for decimal points and minus signs)
+ * from the input string, parses it as a floating-point number, and returns the value in cents
+ * as an integer by multiplying by 100 and rounding to the nearest whole number.
+ *
+ * @param amount - The currency amount as a string (e.g., "$12.34", "€56.78").
+ * @returns The integer value in cents (e.g., "12.34" returns 1234).
+ */
+export function currencyStringToIntegerCents(amount: string): number {
+  const parsed = parseFloat(amount.replace(/[^0-9.-]+/g, "")) || 0
+  return Math.round(parsed * 100)
+}
+
+/**
+ * Converts an amount in integer cents to its currency value as a number.
+ *
+ * @param amountInCents - The amount in cents to be converted.
+ * @returns The equivalent currency value as a number.
+ */
+export function integerCentsToCurrencyNumber(amountInCents: number): number {
+  return amountInCents / 100
 }
 
 /**
