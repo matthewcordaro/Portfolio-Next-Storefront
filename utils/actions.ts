@@ -78,6 +78,7 @@ function renderError(error: unknown): Message {
   return {
     message:
       error instanceof Error ? error.message : "an unknown error occurred",
+    error: true
   }
 }
 
