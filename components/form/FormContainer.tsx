@@ -4,6 +4,7 @@ import { useFormState } from "react-dom"
 import { useEffect } from "react"
 import { ActionFunction } from "@/utils/types"
 import { useToast } from "@/hooks/use-toast"
+import { redirect } from "next/navigation"
 
 const initialState = {
   message: "",
@@ -11,9 +12,11 @@ const initialState = {
 
 function FormContainer({
   action,
+  onSuccessRedirectTo,
   children,
 }: {
   action: ActionFunction
+  onSuccessRedirectTo?: string
   children: React.ReactNode
 }) {
   const [state, formAction] = useFormState(action, initialState)
@@ -21,6 +24,9 @@ function FormContainer({
   useEffect(() => {
     if (state?.message) {
       toast({ description: state.message })
+      if (onSuccessRedirectTo) {
+        redirect(onSuccessRedirectTo)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
