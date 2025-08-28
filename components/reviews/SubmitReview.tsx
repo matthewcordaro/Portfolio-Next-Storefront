@@ -10,7 +10,13 @@ import { createReviewAction } from "@/utils/actions"
 import { useUser } from "@clerk/nextjs"
 import { nodeEnvironment } from "@/utils/env"
 
-function SubmitReview({ productId }: { productId: string }) {
+function SubmitReview({
+  productId,
+  first = false,
+}: {
+  productId: string
+  first?: boolean
+}) {
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false)
   const { user } = useUser()
   return (
@@ -20,7 +26,7 @@ function SubmitReview({ productId }: { productId: string }) {
         className='capitalize'
         onClick={() => setIsReviewFormVisible((prev) => !prev)}
       >
-        leave review
+        {first ? "Be the first to write a review!" : "leave a review"}
       </Button>
       {isReviewFormVisible && (
         <Card className='p-8 mt-8'>
