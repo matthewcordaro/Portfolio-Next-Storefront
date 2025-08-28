@@ -1,5 +1,12 @@
 import { Prisma, Review } from "@prisma/client"
 
+/**
+ * Represents the possible values for the Node.js environment.
+ *
+ * - `"test"`: Used when running tests.
+ * - `"development"`: Used during development.
+ * - `"production"`: Used in production deployments.
+ */
 export type NodeEnvironment = "test" | "development" | "production"
 
 /**
