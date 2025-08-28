@@ -7,7 +7,7 @@ export type NodeEnvironment = "test" | "development" | "production"
  *
  * @property message - The message text.
  */
-export type Message = { message: string }
+export type Message = { message: string; error?: boolean }
 
 /**
  * Represents a function that performs an action based on the previous state and form data,

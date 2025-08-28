@@ -7,7 +7,7 @@ import ProductRating from "@/components/single-product/ProductRating"
 import ShareButton from "@/components/single-product/ShareButton"
 import SubmitReview from "@/components/reviews/SubmitReview"
 import ProductReviews from "@/components/reviews/ProductReviews"
-import { fetchSingleProduct, findExistingReview } from "@/utils/actions"
+import { fetchProductReviews, fetchSingleProduct } from "@/utils/actions"
 import { auth } from "@clerk/nextjs/server"
 import Link from "next/link"
 
@@ -15,9 +15,15 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
   const product = await fetchSingleProduct(params.id)
   const { name, image, company, description, price } = product
   const formattedPrice = formatCurrency(price)
+
   const { userId } = auth()
-  const reviewDoesNotExist =
-    userId && !(await findExistingReview(userId, product.id))
+  const reviews = await fetchProductReviews(product.id)
+  const currentUserReviewExists =
+    typeof userId === "string" &&
+    reviews.map(({ clerkId }) => clerkId).includes(userId)
+
+  // If reviews is an array, get its length; otherwise, set to 0
+
   return (
     <section>
       <BreadCrumbs name={name} />
@@ -54,11 +60,10 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
         </div>
       </div>
       <div id='product-rating' />
-      <ProductReviews
-        productId={product.id}
-        currentUserId={userId || undefined}
-      />
-      {reviewDoesNotExist && <SubmitReview productId={product.id} />}
+      <ProductReviews reviews={reviews} currentUserId={userId || undefined} />
+      {!currentUserReviewExists && (
+        <SubmitReview productId={product.id} first />
+      )}
     </section>
   )
 }
