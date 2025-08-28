@@ -33,7 +33,10 @@ async function EditProductPage({ params }: { params: { id: string } }) {
           <input type='hidden' name='id' value={id} />
           <input type='hidden' name='url' value={product.image} />
         </ImageInputContainer>
-        <FormContainer action={updateProductAction}>
+        <FormContainer
+          action={updateProductAction}
+          onSuccessRedirectTo='/admin/products/'
+        >
           <div className='grid gap-4 md:grid-cols-2 my-4'>
             <input type='hidden' name='id' value={id} />
             <FormInput
