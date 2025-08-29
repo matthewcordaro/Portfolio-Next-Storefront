@@ -25,6 +25,7 @@ import { UserRole } from "@/utils/types"
 
 function LinksDropdown() {
   const [userType, setUserType] = useState<UserRole>("guest")
+  const [open, setOpen] = useState(false)
   useEffect(() => {
     async function fetchUserType() {
       const type = await getCurrentUserType()
@@ -33,10 +34,15 @@ function LinksDropdown() {
     fetchUserType()
   }, [])
 
+  const handleSignOut = () => {
+    setUserType("guest")
+    setOpen(false)
+  }
+
   const displayLinks = links[userType]
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant='outline' className='flex gap-4 max-w-[100px]'>
             <BsThreeDotsVertical className='w-6 h-6' />
@@ -64,7 +70,7 @@ function LinksDropdown() {
           <SignedIn>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <SignOutLink />
+              <SignOutLink onSignOut={handleSignOut} />
             </DropdownMenuItem>
           </SignedIn>
         </DropdownMenuContent>
