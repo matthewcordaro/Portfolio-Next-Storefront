@@ -1,3 +1,4 @@
+"use client"
 import { BsThreeDotsVertical } from "react-icons/bs"
 import {
   DropdownMenu,
@@ -8,17 +9,31 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { Button } from "../ui/button"
-import { adminLinks, guestLinks, userLinks, NavLink } from "@/utils/links"
+import { NavLink, links } from "@/utils/links"
 import UserIcon from "./UserIcon"
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
+import {
+  Protect,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+} from "@clerk/nextjs"
 import SignOutLink from "./SignOutLink"
-import { auth } from "@clerk/nextjs/server"
-import { getAdminUserIds } from "@/utils/env"
+import { useEffect, useState } from "react"
+import { getCurrentUserType } from "@/utils/actions"
+import { UserRole } from "@/utils/types"
 
 function LinksDropdown() {
-  const { userId } = auth()
-  const isAdmin = userId !== null && getAdminUserIds().includes(userId)
-  const links = isAdmin ? adminLinks : userLinks
+  const [userType, setUserType] = useState<UserRole>("guest")
+  useEffect(() => {
+    async function fetchUserType() {
+      const type = await getCurrentUserType()
+      setUserType(type)
+    }
+    fetchUserType()
+  }, [])
+
+  const displayLinks = links[userType]
   return (
     <>
       <DropdownMenu>
@@ -29,8 +44,10 @@ function LinksDropdown() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-36' align='end' sideOffset={10}>
+          {/* Links */}
+          <MenuLinks links={displayLinks} />
+          {/* Signed Out */}
           <SignedOut>
-            <MenuLinks links={guestLinks} />
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <SignInButton mode='modal'>
@@ -43,8 +60,8 @@ function LinksDropdown() {
               </SignUpButton>
             </DropdownMenuItem>
           </SignedOut>
+          {/* Signed In */}
           <SignedIn>
-            <MenuLinks links={links} />
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <SignOutLink />
