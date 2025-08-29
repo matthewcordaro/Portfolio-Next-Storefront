@@ -4,10 +4,11 @@ import { useToast } from "@/hooks/use-toast"
 import { SignOutButton } from "@clerk/nextjs"
 import Link from "next/link"
 
-function SignOutLink() {
+function SignOutLink({ onSignOut }: { onSignOut?: () => void }) {
   const { toast } = useToast()
   const handleLogout = () => {
     toast({ description: "Logging Out..." })
+    if (onSignOut) onSignOut()
   }
   return (
     <SignOutButton>
