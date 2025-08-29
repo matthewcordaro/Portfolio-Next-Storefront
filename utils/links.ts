@@ -22,6 +22,28 @@ export const adminLinks: NavLink[] = [
   ...userLinks,
   { href: "/admin/sales", label: "dashboard" },
 ]
+//TODO: remove export for the above links now that UserRole is added below.
+
+/**
+ * A mapping of user roles to their respective navigation links.
+ *
+ * The keys are user roles defined in the `UserRole` type, and the values are arrays of `NavLink` objects
+ * representing the navigation options available to each role.
+ *
+ * @remarks
+ * - `guestLinks`, `userLinks`, and `adminLinks` should be arrays of `NavLink` objects defined elsewhere.
+ * - This object is useful for rendering role-based navigation menus.
+ *
+ * @example
+ * ```typescript
+ * const userNavLinks = links['user'];
+ * ```
+ */
+export const links: Record<import("./types").UserRole, NavLink[]> = {
+  guest: guestLinks,
+  user: userLinks,
+  admin: adminLinks,
+}
 
 export const adminSidebarLinks: NavLink[] = [
   { href: "/admin/sales", label: "sales" },
