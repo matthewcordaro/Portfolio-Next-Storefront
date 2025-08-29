@@ -82,7 +82,7 @@ export const toggleFavoriteAction = async (prevState: {
  */
 export const fetchUserFavorites = async (): Promise<FavoriteWithProduct[]> => {
   const user = await getAuthUser()
-  const favorites = db.favorite.findMany({
+  const favorites = await db.favorite.findMany({
     where: {
       clerkId: user.id,
     },
