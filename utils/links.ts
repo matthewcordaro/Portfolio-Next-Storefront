@@ -3,13 +3,13 @@ export type NavLink = {
   label: string
 }
 
-export const guestLinks: NavLink[] = [
+const guestLinks: NavLink[] = [
   { href: "/", label: "home" },
   { href: "/about", label: "about" },
   { href: "/products", label: "products" },
 ]
 
-export const userLinks: NavLink[] = [
+const userLinks: NavLink[] = [
   ...guestLinks,
   { href: "/user", label: "user" },
   { href: "/favorites", label: "favorites" },
@@ -18,11 +18,10 @@ export const userLinks: NavLink[] = [
   { href: "/orders", label: "orders" },
 ]
 
-export const adminLinks: NavLink[] = [
+const adminLinks: NavLink[] = [
   ...userLinks,
   { href: "/admin/sales", label: "dashboard" },
 ]
-//TODO: remove export for the above links now that UserRole is added below.
 
 /**
  * A mapping of user roles to their respective navigation links.
