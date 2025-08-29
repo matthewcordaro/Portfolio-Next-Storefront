@@ -10,12 +10,18 @@ import { Prisma, Review } from "@prisma/client"
 export type NodeEnvironment = "test" | "development" | "production"
 
 /**
- * Represents the possible user roles within the application.
- * - `"guest"`: A user who is not authenticated.
- * - `"user"`: An authenticated regular user.
- * - `"admin"`: A user with administrative privileges.
+ * Represents the possible roles for an authenticated user.
+ * - `"user"`: A regular user with standard permissions.
+ * - `"admin"`: An administrator with elevated permissions.
  */
-export type UserRole = "guest" | "user" | "admin"
+export type AuthenticatedUserRole = "user" | "admin"
+
+/**
+ * Represents the possible roles for any user, including guests.
+ * - `"guest"`: A user who is not authenticated.
+ * - `AuthenticatedUserRole`: Any role that an authenticated user can have.
+ */
+export type UserRole = "guest" | AuthenticatedUserRole
 
 /**
  * Represents a simple message object containing a single string property.
