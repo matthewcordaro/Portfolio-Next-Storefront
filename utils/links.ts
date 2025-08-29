@@ -1,3 +1,9 @@
+/**
+ * Represents a navigation link with a destination URL and display label.
+ *
+ * @property href - The URL or path the navigation link points to.
+ * @property label - The text to display for the navigation link.
+ */
 export type NavLink = {
   href: string
   label: string
@@ -29,10 +35,6 @@ const adminLinks: NavLink[] = [
  * The keys are user roles defined in the `UserRole` type, and the values are arrays of `NavLink` objects
  * representing the navigation options available to each role.
  *
- * @remarks
- * - `guestLinks`, `userLinks`, and `adminLinks` should be arrays of `NavLink` objects defined elsewhere.
- * - This object is useful for rendering role-based navigation menus.
- *
  * @example
  * ```typescript
  * const userNavLinks = links['user'];
@@ -44,6 +46,13 @@ export const links: Record<import("./types").UserRole, NavLink[]> = {
   admin: adminLinks,
 }
 
+/**
+ * An array of navigation links for the admin sidebar.
+ * Each link contains a `href` for navigation and a `label` for display.
+ *
+ * @remarks
+ * Used to render the sidebar navigation in the admin section of the application.
+ */
 export const adminSidebarLinks: NavLink[] = [
   { href: "/admin/sales", label: "sales" },
   { href: "/admin/products", label: "products" },
