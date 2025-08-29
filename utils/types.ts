@@ -1,6 +1,27 @@
 import { Prisma, Review } from "@prisma/client"
 
+/**
+ * Represents the possible values for the Node.js environment.
+ *
+ * - `"test"`: Used when running tests.
+ * - `"development"`: Used during development.
+ * - `"production"`: Used in production deployments.
+ */
 export type NodeEnvironment = "test" | "development" | "production"
+
+/**
+ * Represents the possible roles for an authenticated user.
+ * - `"user"`: A regular user with standard permissions.
+ * - `"admin"`: An administrator with elevated permissions.
+ */
+export type AuthenticatedUserRole = "user" | "admin"
+
+/**
+ * Represents the possible roles for any user, including guests.
+ * - `"guest"`: A user who is not authenticated.
+ * - `AuthenticatedUserRole`: Any role that an authenticated user can have.
+ */
+export type UserRole = "guest" | AuthenticatedUserRole
 
 /**
  * Represents a simple message object containing a single string property.

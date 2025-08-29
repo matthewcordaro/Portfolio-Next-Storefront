@@ -1,4 +1,11 @@
+"use client"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
 import { BsThreeDotsVertical } from "react-icons/bs"
+import { links } from "@/utils/links"
+import { getCurrentUserType } from "@/utils/actions"
+import { UserRole } from "@/utils/types"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,22 +13,41 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
-import { Button } from "../ui/button"
-import { adminLinks, guestLinks, userLinks, NavLink } from "@/utils/links"
+import { Button } from "@/components/ui/button"
 import UserIcon from "./UserIcon"
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
 import SignOutLink from "./SignOutLink"
-import { auth } from "@clerk/nextjs/server"
-import { getAdminUserIds } from "@/utils/env"
 
+/**
+ * Renders a dropdown menu for navigation links and user authentication actions.
+ *
+ * The menu displays different links based on current user's `UserRole`.
+ * It also provides sign-in, sign-up, and sign-out options depending on the authentication state.
+ *
+ * @remarks
+ * Client-side component.
+ */
 function LinksDropdown() {
-  const { userId } = auth()
-  const isAdmin = userId !== null && getAdminUserIds().includes(userId)
-  const links = isAdmin ? adminLinks : userLinks
+  // State for dropdown open/close
+  const [open, setOpen] = useState(false)
+
+  // State for user type
+  const [userType, setUserType] = useState<UserRole>("guest")
+  useEffect(() => {
+    async function fetchUserType() {
+      const type = await getCurrentUserType()
+      setUserType(type)
+    }
+    fetchUserType()
+  }, [])
+
+  const handleSignOut = () => {
+    setUserType("guest")
+    setOpen(false)
+  }
+
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant='outline' className='flex gap-4 max-w-[100px]'>
             <BsThreeDotsVertical className='w-6 h-6' />
@@ -29,8 +55,20 @@ function LinksDropdown() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-36' align='end' sideOffset={10}>
+          {/* Links */}
+          {links[userType].map(({ href, label }) => (
+            <DropdownMenuItem
+              asChild
+              key={href}
+              className='flex w-full text-right justify-end'
+            >
+              <Link href={href} className='capitalize w-full'>
+                {label}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+          {/* Signed Out */}
           <SignedOut>
-            <MenuLinks links={guestLinks} />
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <SignInButton mode='modal'>
@@ -43,11 +81,11 @@ function LinksDropdown() {
               </SignUpButton>
             </DropdownMenuItem>
           </SignedOut>
+          {/* Signed In */}
           <SignedIn>
-            <MenuLinks links={links} />
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <SignOutLink />
+              <SignOutLink onSignOut={handleSignOut} />
             </DropdownMenuItem>
           </SignedIn>
         </DropdownMenuContent>
@@ -56,23 +94,3 @@ function LinksDropdown() {
   )
 }
 export default LinksDropdown
-
-function MenuLinks({ links }: { links: NavLink[] }) {
-  return (
-    <>
-      {links.map((link) => {
-        return (
-          <DropdownMenuItem
-            asChild
-            key={link.href}
-            className='flex w-full text-right justify-end'
-          >
-            <Link href={link.href} className='capitalize w-full'>
-              {link.label}
-            </Link>
-          </DropdownMenuItem>
-        )
-      })}
-    </>
-  )
-}
