@@ -18,6 +18,7 @@ import {
   ActionFunction,
   CartWithProducts,
   FavoriteWithProduct,
+  UserRole,
 } from "./types"
 import pluralize from "pluralize-esm"
 import { currencyStringToIntegerCents } from "./format"
@@ -45,6 +46,19 @@ async function getAdminUser(): Promise<User> {
   const user = await getAuthUser()
   if (!getAdminUserIds().includes(user.id)) redirect("/")
   return user
+}
+
+/**
+ * Determines the type of a user based on their presence and ID.
+ *
+ * @param user - The user object or `null` if no user is authenticated.
+ * @returns The type of the user: `"guest"` if no user is provided, `"admin"` if the user's ID is in the admin list, or `"user"` otherwise.
+ */
+export async function getCurrentUserType(): Promise<UserRole> {
+  const user = await currentUser()
+  if (!user) return "guest"
+  if (getAdminUserIds().includes(user.id)) return "admin"
+  return "user"
 }
 
 /**
@@ -78,7 +92,7 @@ function renderError(error: unknown): Message {
   return {
     message:
       error instanceof Error ? error.message : "an unknown error occurred",
-    error: true
+    error: true,
   }
 }
 
